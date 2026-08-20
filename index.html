@@ -285,14 +285,14 @@
 <!-- ONLINE & LOCAL STORAGE MANAGEMENT PANEL -->
 <div class="storage-container actions-ignore admin-only">
     <div class="report-header" style="color: #6610f2; border-color: #6610f2;">Online & Local Storage Manager</div>
-    <div class="report-subhead">Manage local backups or sync data to an online JSON endpoint (e.g., npoint.io or JSONBin).</div>
+    <div class="report-subhead">Data automatically syncs with your online cloud endpoint in real time.</div>
     
     <div style="margin-bottom: 12px;">
         <label style="font-size: 13px; font-weight: bold; display: block; margin-bottom: 4px;">Cloud Sync Endpoint URL:</label>
         <div style="display: flex; gap: 8px;">
-            <input type="text" id="cloudSyncUrl" placeholder="https://api.npoint.io/your-bin-id" style="border: 1px solid #ccc; padding: 8px; border-radius: 4px; background: #fafafa; flex: 1;" oninput="saveActiveDraft()">
-            <button class="btn btn-cloud" style="flex: 0 0 auto; padding: 8px 14px; min-height: auto;" onclick="pushToCloudStorage()">Push to Cloud</button>
-            <button class="btn btn-storage" style="flex: 0 0 auto; padding: 8px 14px; min-height: auto;" onclick="pullFromCloudStorage()">Pull from Cloud</button>
+            <input type="text" id="cloudSyncUrl" value="https://api.npoint.io/e6ce6cdb92b91640e009" style="border: 1px solid #ccc; padding: 8px; border-radius: 4px; background: #fafafa; flex: 1;" oninput="saveActiveDraft()">
+            <button class="btn btn-cloud" style="flex: 0 0 auto; padding: 8px 14px; min-height: auto;" onclick="pushToCloudStorage()">Manual Push</button>
+            <button class="btn btn-storage" style="flex: 0 0 auto; padding: 8px 14px; min-height: auto;" onclick="pullFromCloudStorage()">Manual Pull</button>
         </div>
     </div>
 
@@ -620,6 +620,8 @@
 <script>
     const ACTION_PASSCODE = "spiderman";
     let currentRole = null;
+    let autoSyncTimer = null;
+    let isInitialLoading = true;
 
     function handleLogin() {
         const role = document.getElementById('loginRole').value;
@@ -895,7 +897,7 @@
     }
 
     function saveActiveDraft() {
-        if (currentRole === 'viewer') return;
+        if (isInitialLoading) return;
         const draft = {
             cloudSyncUrl: document.getElementById('cloudSyncUrl').value,
             eventDate: document.getElementById('eventDate').value,
@@ -916,6 +918,14 @@
             scNets: Array.from(document.querySelectorAll('.sc-net')).map(i => i.value)
         };
         localStorage.setItem('dolores_active_draft', JSON.stringify(draft));
+
+        // Automatically trigger background push to cloud (debounced by 1.5 seconds)
+        if (currentRole !== 'viewer') {
+            clearTimeout(autoSyncTimer);
+            autoSyncTimer = setTimeout(() => {
+                pushToCloudStorageSilent();
+            }, 1500);
+        }
     }
 
     function loadActiveDraft() {
@@ -963,6 +973,23 @@
         }
     }
 
+    async function pushToCloudStorageSilent() {
+        const url = document.getElementById('cloudSyncUrl').value.trim();
+        if (!url) return;
+        const saved = localStorage.getItem('dolores_active_draft');
+        if (!saved) return;
+
+        try {
+            await fetch(url, {
+                method: 'PUT',
+                headers: { 'Content-Type': 'application/json' },
+                body: saved
+            });
+        } catch (err) {
+            console.error("Auto-sync push background error:", err);
+        }
+    }
+
     async function pushToCloudStorage() {
         const url = document.getElementById('cloudSyncUrl').value.trim();
         if (!url) {
@@ -992,32 +1019,33 @@
         }
     }
 
-    async function pullFromCloudStorage() {
+    async function pullFromCloudStorage(isAutomatic = false) {
         const url = document.getElementById('cloudSyncUrl').value.trim();
-        if (!url) {
-            alert("Please enter a valid Cloud Sync Endpoint URL first!");
-            return;
-        }
-
-        if (!confirm("Pulling data from the cloud will overwrite your current screen data. Continue?")) return;
+        if (!url) return;
 
         try {
             const response = await fetch(url);
             if (response.ok) {
                 const data = await response.json();
-                localStorage.setItem('dolores_active_draft', JSON.stringify(data));
-                loadActiveDraft();
-                calculate();
-                calculateDrawShares(true);
-                calculateShadowShares(true);
-                calculateReportTotal();
-                alert("Successfully pulled and updated data from cloud storage!");
-            } else {
+                if (data && Object.keys(data).length > 0) {
+                    localStorage.setItem('dolores_active_draft', JSON.stringify(data));
+                    loadActiveDraft();
+                    calculate();
+                    calculateDrawShares(true);
+                    calculateShadowShares(true);
+                    calculateReportTotal();
+                    if (!isAutomatic) {
+                        alert("Successfully pulled and updated data from cloud storage!");
+                    }
+                }
+            } else if (!isAutomatic) {
                 alert("Failed to retrieve data from the given cloud URL.");
             }
         } catch (err) {
-            console.error(err);
-            alert("Network error while pulling from cloud.");
+            console.error("Cloud pull error:", err);
+            if (!isAutomatic) {
+                alert("Network error while pulling from cloud.");
+            }
         }
     }
 
@@ -1039,7 +1067,7 @@
         reader.onload = function(e) {
             try {
                 const content = e.target.result;
-                JSON.parse(content); // Test valid JSON
+                JSON.parse(content);
                 localStorage.setItem('dolores_active_draft', content);
                 loadActiveDraft();
                 calculate();
@@ -1185,13 +1213,17 @@
         });
     }
 
-    window.addEventListener('DOMContentLoaded', () => {
+    window.addEventListener('DOMContentLoaded', async () => {
         const savedRole = localStorage.getItem('dolores_user_role');
         if (savedRole === 'admin' || savedRole === 'viewer') {
             currentRole = savedRole;
             initSession();
         }
 
+        // Automatically pull fresh data from the cloud on initial page load
+        await pullFromCloudStorage(true);
+
+        isInitialLoading = false;
         loadActiveDraft();
         calculate();
         calculateDrawShares(true);
