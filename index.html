@@ -468,7 +468,6 @@
         .btn-delete { background-color: #dc3545; }
         .btn-warning { background-color: #ff9800; }
         .btn-storage { background-color: #6610f2; }
-        .btn-sort { background-color: #fd7e14; }
 
         .shares-header {
             background-color: var(--primary-red);
@@ -650,16 +649,89 @@
     </div>
 </div>
 
-<!-- SEPARATE REPORT 1: DRAW SHARE (DOLORES) - 5 ROWS -->
-<div class="report-container" id="drawShareSheet">
-    <div class="report-header">Draw Share Report</div>
-    <div class="report-subhead">* Input dates and Net Gains to automatically calculate the 50% split for Draw Share.</div>
+<!-- WEEKLY PROGRAMMER SHARE REPORT (7 DAYS) -->
+<div class="report-container" id="reportSheet">
+    <div class="report-header">Weekly Programmer Share Report</div>
+    <div class="report-subhead">* Rows automatically sort by date. Negative values are excluded from the total payout.</div>
+
+    <div class="history-bar actions-ignore">
+        <label for="reportHistorySelect">Review Past Weekly Reports:</label>
+        <select id="reportHistorySelect" onchange="loadSelectedReport()">
+            <option value="current">-- Active Weekly Working Draft --</option>
+        </select>
+        <input type="text" id="reportTitle" placeholder="Report Title (e.g., Week 1 Batch)" oninput="saveActiveDraft()">
+        <span class="snapshot-text" id="snap-reportTitle"></span>
+    </div>
 
     <div class="table-responsive">
         <table>
             <thead>
                 <tr>
-                    <th colspan="3" class="shares-header">DRAW SHARE (DOLORES)</th>
+                    <th style="width: 5%;">#</th>
+                    <th style="width: 25%;">Date</th>
+                    <th style="width: 28%;">Event Description</th>
+                    <th style="width: 22%;">Programmer 5% Share</th>
+                    <th style="width: 20%;" class="actions-ignore admin-only">Action</th>
+                </tr>
+            </thead>
+            <tbody id="reportTableBody">
+                <script>
+                    for (let i = 1; i <= 7; i++) {
+                        document.write(`
+                            <tr id="day-row-${i}">
+                                <td style="text-align: center;" class="row-num">${i}</td>
+                                <td>
+                                    <input type="date" class="r-date" readonly>
+                                    <span class="snapshot-text r-date-snap"></span>
+                                </td>
+                                <td>
+                                    <input type="text" class="r-desc" placeholder="Empty" readonly>
+                                    <span class="snapshot-text r-desc-snap"></span>
+                                </td>
+                                <td>
+                                    <input type="number" class="report-share num-input" placeholder="0" readonly>
+                                    <span class="snapshot-text num-input r-share-snap">0</span>
+                                </td>
+                                <td style="text-align: center;" class="actions-ignore admin-only">
+                                    <button class="btn btn-warning btn-sm" onclick="resetSingleDayWithPasscode(${i})">Reset Day ${i}</button>
+                                </td>
+                            </tr>
+                        `);
+                    }
+                </script>
+                <tr>
+                    <td colspan="3" style="text-align: right; font-weight: 900;">TOTAL WEEKLY PAYOUT:</td>
+                    <td id="reportTotalDisplay" style="text-align: right; font-weight: 900; font-size: 16px;">0</td>
+                    <td class="actions-ignore admin-only"></td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+
+    <div style="margin-top: 15px;">
+        <label style="font-size: 13px; font-weight: bold; color: #333; text-transform: uppercase; display: block; margin-bottom: 5px;">Management Review Notes / Remarks:</label>
+        <textarea id="weeklyReviewNotes" placeholder="Enter week remarks, adjustments, or audit notes here..." rows="2" style="width: 100%; border: 1px solid #333; padding: 8px; font-size: 14px; border-radius: 4px; resize: vertical; background: #fafafa;" oninput="saveActiveDraft()"></textarea>
+        <span class="snapshot-text" id="snap-weeklyReviewNotes" style="border: 1px solid #333; padding: 8px; min-height: 40px; background: #fafafa;"></span>
+    </div>
+
+    <div class="actions">
+        <button class="btn btn-reset admin-only" onclick="resetAllDaysWithPasscode()">Reset All Days</button>
+        <button class="btn btn-save admin-only" onclick="saveReportToHistory()">Save Weekly Batch</button>
+        <button class="btn btn-delete admin-only" onclick="deleteSelectedReportWithPasscode()">Delete Weekly Batch</button>
+        <button class="btn btn-photo" onclick="saveAsPhoto('reportSheet', 'Weekly_Programmer_Report.png')">Save Weekly Report as Photo</button>
+    </div>
+</div>
+
+<!-- DRAW SHARE REPORT (MOVED TO BOTTOM) - 5 ROWS -->
+<div class="report-container" id="drawShareSheet">
+    <div class="report-header">Draw Share Report</div>
+    <div class="report-subhead">* Input dates and Net Gains to automatically sort and calculate the 50% split.</div>
+
+    <div class="table-responsive">
+        <table>
+            <thead>
+                <tr>
+                    <th colspan="3" class="shares-header">DRAW SHARE</th>
                 </tr>
                 <tr>
                     <th style="width: 35%;">DATE</th>
@@ -695,22 +767,21 @@
     </div>
 
     <div class="actions">
-        <button class="btn btn-sort admin-only" onclick="sortDrawSharesByDate()">Arrange by Date</button>
         <button class="btn btn-reset admin-only" onclick="resetDrawSharesWithPasscode()">Reset Draw Share</button>
-        <button class="btn btn-photo" onclick="saveAsPhoto('drawShareSheet', 'Draw_Share_Dolores.png')">Save Draw Share as Photo</button>
+        <button class="btn btn-photo" onclick="saveAsPhoto('drawShareSheet', 'Draw_Share.png')">Save Draw Share as Photo</button>
     </div>
 </div>
 
-<!-- SEPARATE REPORT 2: SHADOW COLLECTIVE (DOLORES) - 10 ROWS -->
+<!-- SHADOW COLLECTIVE REPORT (MOVED TO BOTTOM) - 10 ROWS -->
 <div class="report-container" id="shadowSheet">
     <div class="report-header">Shadow Collective Report</div>
-    <div class="report-subhead">* Input dates and Net Gains to automatically calculate the 70% and 30% splits.</div>
+    <div class="report-subhead">* Input dates and Net Gains to automatically sort and calculate the 70% and 30% splits.</div>
 
     <div class="table-responsive">
         <table>
             <thead>
                 <tr>
-                    <th colspan="4" class="shares-header">SHADOW COLLECTIVE (DOLORES)</th>
+                    <th colspan="4" class="shares-header">SHADOW COLLECTIVE</th>
                 </tr>
                 <tr>
                     <th style="width: 28%;">DATE</th>
@@ -749,83 +820,8 @@
     </div>
 
     <div class="actions">
-        <button class="btn btn-sort admin-only" onclick="sortShadowSharesByDate()">Arrange by Date</button>
         <button class="btn btn-reset admin-only" onclick="resetShadowSharesWithPasscode()">Reset Shadow Collective</button>
-        <button class="btn btn-photo" onclick="saveAsPhoto('shadowSheet', 'Shadow_Collective_Dolores.png')">Save Shadow Collective as Photo</button>
-    </div>
-</div>
-
-<!-- WEEKLY PROGRAMMER SHARE REPORT (7 DAYS) -->
-<div class="report-container" id="reportSheet">
-    <div class="report-header">Weekly Programmer Share Report</div>
-    <div class="report-subhead">* Date, Event Description, and Programmer Share fields are locked against manual edits. Negative values are excluded from the total payout.</div>
-
-    <div class="history-bar actions-ignore">
-        <label for="reportHistorySelect">Review Past Weekly Reports:</label>
-        <select id="reportHistorySelect" onchange="loadSelectedReport()">
-            <option value="current">-- Active Weekly Working Draft --</option>
-        </select>
-        <input type="text" id="reportTitle" placeholder="Report Title (e.g., Week 1 Batch)" oninput="saveActiveDraft()">
-        <span class="snapshot-text" id="snap-reportTitle"></span>
-    </div>
-
-    <div class="table-responsive">
-        <table>
-            <thead>
-                <tr>
-                    <th style="width: 5%;">#</th>
-                    <th style="width: 25%;">Date</th>
-                    <th style="width: 28%;">Event Description</th>
-                    <th style="width: 22%;">Programmer 5% Share</th>
-                    <th style="width: 20%;" class="actions-ignore admin-only">Action</th>
-                </tr>
-            </thead>
-            <tbody id="reportTableBody">
-                <script>
-                    for (let i = 1; i <= 7; i++) {
-                        document.write(`
-                            <tr id="day-row-${i}">
-                                <td style="text-align: center;">${i}</td>
-                                <td>
-                                    <input type="date" class="r-date" readonly>
-                                    <span class="snapshot-text r-date-snap"></span>
-                                </td>
-                                <td>
-                                    <input type="text" class="r-desc" placeholder="Empty" readonly>
-                                    <span class="snapshot-text r-desc-snap"></span>
-                                </td>
-                                <td>
-                                    <input type="number" class="report-share num-input" placeholder="0" readonly>
-                                    <span class="snapshot-text num-input r-share-snap">0</span>
-                                </td>
-                                <td style="text-align: center;" class="actions-ignore admin-only">
-                                    <button class="btn btn-warning btn-sm" onclick="resetSingleDayWithPasscode(${i})">Reset Day ${i}</button>
-                                </td>
-                            </tr>
-                        `);
-                    }
-                </script>
-                <tr>
-                    <td colspan="3" style="text-align: right; font-weight: 900;">TOTAL WEEKLY PAYOUT:</td>
-                    <td id="reportTotalDisplay" style="text-align: right; font-weight: 900; font-size: 16px;">0</td>
-                    <td class="actions-ignore admin-only"></td>
-                </tr>
-            </tbody>
-        </table>
-    </div>
-
-    <div style="margin-top: 15px;">
-        <label style="font-size: 13px; font-weight: bold; color: #333; text-transform: uppercase; display: block; margin-bottom: 5px;">Management Review Notes / Remarks:</label>
-        <textarea id="weeklyReviewNotes" placeholder="Enter week remarks, adjustments, or audit notes here..." rows="2" style="width: 100%; border: 1px solid #333; padding: 8px; font-size: 14px; border-radius: 4px; resize: vertical; background: #fafafa;" oninput="saveActiveDraft()"></textarea>
-        <span class="snapshot-text" id="snap-weeklyReviewNotes" style="border: 1px solid #333; padding: 8px; min-height: 40px; background: #fafafa;"></span>
-    </div>
-
-    <div class="actions">
-        <button class="btn btn-sort admin-only" onclick="sortWeeklyReportByDate()">Arrange by Date</button>
-        <button class="btn btn-reset admin-only" onclick="resetAllDaysWithPasscode()">Reset All Days</button>
-        <button class="btn btn-save admin-only" onclick="saveReportToHistory()">Save Weekly Batch</button>
-        <button class="btn btn-delete admin-only" onclick="deleteSelectedReportWithPasscode()">Delete Weekly Batch</button>
-        <button class="btn btn-photo" onclick="saveAsPhoto('reportSheet', 'Weekly_Programmer_Report.png')">Save Weekly Report as Photo</button>
+        <button class="btn btn-photo" onclick="saveAsPhoto('shadowSheet', 'Shadow_Collective.png')">Save Shadow Collective as Photo</button>
     </div>
 </div>
 
@@ -968,14 +964,28 @@
     }
 
     function calculateDrawShares() {
-        const netInputs = document.querySelectorAll('.ds-net');
-        const fiftyCells = document.querySelectorAll('.ds-fifty');
+        const tbody = document.getElementById('drawShareBody');
+        const rows = Array.from(tbody.querySelectorAll('tr')).slice(0, 5);
 
+        // Auto-sort rows by date (oldest to newest)
+        rows.sort((a, b) => {
+            const dateA = a.querySelector('.ds-date').value;
+            const dateB = b.querySelector('.ds-date').value;
+            if (!dateA && !dateB) return 0;
+            if (!dateA) return 1;
+            if (!dateB) return -1;
+            return dateA.localeCompare(dateB);
+        });
+
+        rows.forEach(row => tbody.insertBefore(row, tbody.lastElementChild));
+
+        const fiftyCells = document.querySelectorAll('.ds-fifty');
         let totalNet = 0;
         let totalFifty = 0;
 
-        netInputs.forEach((input, i) => {
-            const val = input.value !== "" ? Number(input.value) : null;
+        rows.forEach((row, i) => {
+            const inputNet = row.querySelector('.ds-net');
+            const val = inputNet.value !== "" ? Number(inputNet.value) : null;
             if (val !== null && !isNaN(val)) {
                 const fifty = val * 0.50;
                 fiftyCells[i].textContent = formatNumber(fifty);
@@ -990,24 +1000,6 @@
         document.getElementById('dsFiftyTotalDisplay').textContent = formatNumber(totalFifty);
     }
 
-    function sortDrawSharesByDate() {
-        const tbody = document.getElementById('drawShareBody');
-        const rows = Array.from(tbody.querySelectorAll('tr')).slice(0, 5);
-
-        rows.sort((a, b) => {
-            const dateA = a.querySelector('.ds-date').value;
-            const dateB = b.querySelector('.ds-date').value;
-            if (!dateA && !dateB) return 0;
-            if (!dateA) return 1;
-            if (!dateB) return -1;
-            return dateA.localeCompare(dateB);
-        });
-
-        rows.forEach(row => tbody.insertBefore(row, tbody.lastElementChild));
-        calculateDrawShares();
-        saveActiveDraft();
-    }
-
     function resetDrawSharesWithPasscode() {
         if (verifyPasscode()) {
             document.querySelectorAll('.ds-date, .ds-net').forEach(input => input.value = '');
@@ -1017,16 +1009,30 @@
     }
 
     function calculateShadowShares() {
-        const netInputs = document.querySelectorAll('.sc-net');
+        const tbody = document.getElementById('shadowBody');
+        const rows = Array.from(tbody.querySelectorAll('tr')).slice(0, 10);
+
+        // Auto-sort rows by date (oldest to newest)
+        rows.sort((a, b) => {
+            const dateA = a.querySelector('.sc-date').value;
+            const dateB = b.querySelector('.sc-date').value;
+            if (!dateA && !dateB) return 0;
+            if (!dateA) return 1;
+            if (!dateB) return -1;
+            return dateA.localeCompare(dateB);
+        });
+
+        rows.forEach(row => tbody.insertBefore(row, tbody.lastElementChild));
+
         const seventyCells = document.querySelectorAll('.sc-seventy');
         const thirtyCells = document.querySelectorAll('.sc-thirty');
-
         let totalNet = 0;
         let totalSeventy = 0;
         let totalThirty = 0;
 
-        netInputs.forEach((input, i) => {
-            const val = input.value !== "" ? Number(input.value) : null;
+        rows.forEach((row, i) => {
+            const inputNet = row.querySelector('.sc-net');
+            const val = inputNet.value !== "" ? Number(inputNet.value) : null;
             if (val !== null && !isNaN(val)) {
                 const seventy = val * 0.70;
                 const thirty = val * 0.30;
@@ -1046,24 +1052,6 @@
         document.getElementById('scThirtyTotalDisplay').textContent = formatNumber(totalThirty);
     }
 
-    function sortShadowSharesByDate() {
-        const tbody = document.getElementById('shadowBody');
-        const rows = Array.from(tbody.querySelectorAll('tr')).slice(0, 10);
-
-        rows.sort((a, b) => {
-            const dateA = a.querySelector('.sc-date').value;
-            const dateB = b.querySelector('.sc-date').value;
-            if (!dateA && !dateB) return 0;
-            if (!dateA) return 1;
-            if (!dateB) return -1;
-            return dateA.localeCompare(dateB);
-        });
-
-        rows.forEach(row => tbody.insertBefore(row, tbody.lastElementChild));
-        calculateShadowShares();
-        saveActiveDraft();
-    }
-
     function resetShadowSharesWithPasscode() {
         if (verifyPasscode()) {
             document.querySelectorAll('.sc-date, .sc-net').forEach(input => input.value = '');
@@ -1073,6 +1061,27 @@
     }
 
     function calculateReportTotal() {
+        const tbody = document.getElementById('reportTableBody');
+        const rows = [];
+        for (let i = 1; i <= 7; i++) {
+            rows.push(document.getElementById(`day-row-${i}`));
+        }
+
+        // Auto-sort rows by date (oldest to newest)
+        rows.sort((a, b) => {
+            const dateA = a.querySelector('.r-date').value;
+            const dateB = b.querySelector('.r-date').value;
+            if (!dateA && !dateB) return 0;
+            if (!dateA) return 1;
+            if (!dateB) return -1;
+            return dateA.localeCompare(dateB);
+        });
+
+        rows.forEach((row, idx) => {
+            row.querySelector('.row-num').textContent = idx + 1;
+            tbody.insertBefore(row, tbody.lastElementChild);
+        });
+
         const reportInputs = document.querySelectorAll('.report-share');
         let totalPayout = 0;
 
@@ -1092,31 +1101,6 @@
         });
 
         document.getElementById('reportTotalDisplay').textContent = formatNumber(totalPayout);
-    }
-
-    function sortWeeklyReportByDate() {
-        const tbody = document.getElementById('reportTableBody');
-        const rows = [];
-        for (let i = 1; i <= 7; i++) {
-            rows.push(document.getElementById(`day-row-${i}`));
-        }
-
-        rows.sort((a, b) => {
-            const dateA = a.querySelector('.r-date').value;
-            const dateB = b.querySelector('.r-date').value;
-            if (!dateA && !dateB) return 0;
-            if (!dateA) return 1;
-            if (!dateB) return -1;
-            return dateA.localeCompare(dateB);
-        });
-
-        rows.forEach((row, idx) => {
-            row.firstElementChild.textContent = idx + 1;
-            tbody.insertBefore(row, tbody.lastElementChild);
-        });
-
-        calculateReportTotal();
-        saveActiveDraft();
     }
 
     function saveActiveDraft() {
@@ -1214,7 +1198,7 @@
                 shareInput.value = progShare;
                 
                 successfullyAdded = true;
-                alert(`Successfully added to Day ${i} of the Weekly Report!`);
+                alert(`Successfully added to the Weekly Report!`);
                 break;
             }
         }
