@@ -468,6 +468,7 @@
         .btn-delete { background-color: #dc3545; }
         .btn-warning { background-color: #ff9800; }
         .btn-storage { background-color: #6610f2; }
+        .btn-sort { background-color: #fd7e14; }
 
         .shares-header {
             background-color: var(--primary-red);
@@ -694,6 +695,7 @@
     </div>
 
     <div class="actions">
+        <button class="btn btn-sort admin-only" onclick="sortDrawSharesByDate()">Arrange by Date</button>
         <button class="btn btn-reset admin-only" onclick="resetDrawSharesWithPasscode()">Reset Draw Share</button>
         <button class="btn btn-photo" onclick="saveAsPhoto('drawShareSheet', 'Draw_Share_Dolores.png')">Save Draw Share as Photo</button>
     </div>
@@ -747,6 +749,7 @@
     </div>
 
     <div class="actions">
+        <button class="btn btn-sort admin-only" onclick="sortShadowSharesByDate()">Arrange by Date</button>
         <button class="btn btn-reset admin-only" onclick="resetShadowSharesWithPasscode()">Reset Shadow Collective</button>
         <button class="btn btn-photo" onclick="saveAsPhoto('shadowSheet', 'Shadow_Collective_Dolores.png')">Save Shadow Collective as Photo</button>
     </div>
@@ -818,6 +821,7 @@
     </div>
 
     <div class="actions">
+        <button class="btn btn-sort admin-only" onclick="sortWeeklyReportByDate()">Arrange by Date</button>
         <button class="btn btn-reset admin-only" onclick="resetAllDaysWithPasscode()">Reset All Days</button>
         <button class="btn btn-save admin-only" onclick="saveReportToHistory()">Save Weekly Batch</button>
         <button class="btn btn-delete admin-only" onclick="deleteSelectedReportWithPasscode()">Delete Weekly Batch</button>
@@ -852,7 +856,6 @@
         }
     }
 
-    // Add Enter key listener specifically for the login passcode input field
     document.getElementById('loginPasscode').addEventListener('keydown', function(e) {
         if (e.key === 'Enter') {
             e.preventDefault();
@@ -987,6 +990,24 @@
         document.getElementById('dsFiftyTotalDisplay').textContent = formatNumber(totalFifty);
     }
 
+    function sortDrawSharesByDate() {
+        const tbody = document.getElementById('drawShareBody');
+        const rows = Array.from(tbody.querySelectorAll('tr')).slice(0, 5);
+
+        rows.sort((a, b) => {
+            const dateA = a.querySelector('.ds-date').value;
+            const dateB = b.querySelector('.ds-date').value;
+            if (!dateA && !dateB) return 0;
+            if (!dateA) return 1;
+            if (!dateB) return -1;
+            return dateA.localeCompare(dateB);
+        });
+
+        rows.forEach(row => tbody.insertBefore(row, tbody.lastElementChild));
+        calculateDrawShares();
+        saveActiveDraft();
+    }
+
     function resetDrawSharesWithPasscode() {
         if (verifyPasscode()) {
             document.querySelectorAll('.ds-date, .ds-net').forEach(input => input.value = '');
@@ -1025,6 +1046,24 @@
         document.getElementById('scThirtyTotalDisplay').textContent = formatNumber(totalThirty);
     }
 
+    function sortShadowSharesByDate() {
+        const tbody = document.getElementById('shadowBody');
+        const rows = Array.from(tbody.querySelectorAll('tr')).slice(0, 10);
+
+        rows.sort((a, b) => {
+            const dateA = a.querySelector('.sc-date').value;
+            const dateB = b.querySelector('.sc-date').value;
+            if (!dateA && !dateB) return 0;
+            if (!dateA) return 1;
+            if (!dateB) return -1;
+            return dateA.localeCompare(dateB);
+        });
+
+        rows.forEach(row => tbody.insertBefore(row, tbody.lastElementChild));
+        calculateShadowShares();
+        saveActiveDraft();
+    }
+
     function resetShadowSharesWithPasscode() {
         if (verifyPasscode()) {
             document.querySelectorAll('.sc-date, .sc-net').forEach(input => input.value = '');
@@ -1053,6 +1092,31 @@
         });
 
         document.getElementById('reportTotalDisplay').textContent = formatNumber(totalPayout);
+    }
+
+    function sortWeeklyReportByDate() {
+        const tbody = document.getElementById('reportTableBody');
+        const rows = [];
+        for (let i = 1; i <= 7; i++) {
+            rows.push(document.getElementById(`day-row-${i}`));
+        }
+
+        rows.sort((a, b) => {
+            const dateA = a.querySelector('.r-date').value;
+            const dateB = b.querySelector('.r-date').value;
+            if (!dateA && !dateB) return 0;
+            if (!dateA) return 1;
+            if (!dateB) return -1;
+            return dateA.localeCompare(dateB);
+        });
+
+        rows.forEach((row, idx) => {
+            row.firstElementChild.textContent = idx + 1;
+            tbody.insertBefore(row, tbody.lastElementChild);
+        });
+
+        calculateReportTotal();
+        saveActiveDraft();
     }
 
     function saveActiveDraft() {
@@ -1244,7 +1308,6 @@
     }
 
     window.addEventListener('DOMContentLoaded', () => {
-        // Check if user was previously logged in
         const savedRole = localStorage.getItem('dolores_user_role');
         if (savedRole === 'admin' || savedRole === 'viewer') {
             currentRole = savedRole;
