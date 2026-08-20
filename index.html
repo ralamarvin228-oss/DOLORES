@@ -919,49 +919,8 @@
     }
 
     function loadActiveDraft() {
-        const saved = localStorage.getItem('dolores_active_draft');
-        if (!saved) return;
-        try {
-            const draft = JSON.parse(saved);
-            if (draft.cloudSyncUrl) document.getElementById('cloudSyncUrl').value = draft.cloudSyncUrl;
-            document.getElementById('eventDate').value = draft.eventDate || '';
-            document.getElementById('eventName').value = draft.eventName || '';
-            document.getElementById('goodFights').value = draft.goodFights || '';
-            document.getElementById('plasada').value = draft.plasada || '';
-            document.getElementById('prize').value = draft.prize || '';
-            document.getElementById('checkedBy').value = draft.checkedBy || '';
-
-            const expenseInputs = document.querySelectorAll('.expense-item');
-            if (draft.expenses) {
-                expenseInputs.forEach((inp, idx) => { inp.value = draft.expenses[idx] || ''; });
-            }
-
-            document.getElementById('reportTitle').value = draft.reportTitle || '';
-            document.getElementById('weeklyReviewNotes').value = draft.weeklyReviewNotes || '';
-
-            const dateInputs = document.querySelectorAll('.r-date');
-            const descInputs = document.querySelectorAll('.r-desc');
-            const shareInputs = document.querySelectorAll('.report-share');
-
-            for (let i = 0; i < 7; i++) {
-                if (draft.dates) dateInputs[i].value = draft.dates[i] || '';
-                if (draft.descs) descInputs[i].value = draft.descs[i] || '';
-                if (draft.shares) shareInputs[i].value = draft.shares[i] || '';
-            }
-
-            const dsDates = document.querySelectorAll('.ds-date');
-            const dsNets = document.querySelectorAll('.ds-net');
-            const scDates = document.querySelectorAll('.sc-date');
-            const scNets = document.querySelectorAll('.sc-net');
-
-            if (draft.dsDates) dsDates.forEach((inp, idx) => inp.value = draft.dsDates[idx] || '');
-            if (draft.dsNets) dsNets.forEach((inp, idx) => inp.value = draft.dsNets[idx] || '');
-            if (draft.scDates) scDates.forEach((inp, idx) => inp.value = draft.scDates[idx] || '');
-            if (draft.scNets) scNets.forEach((inp, idx) => inp.value = draft.scNets[idx] || '');
-
-        } catch (e) {
-            console.error("Error loading active draft", e);
-        }
+        // Fresh start: Clear storage completely on a brand-new setup request
+        localStorage.removeItem('dolores_active_draft');
     }
 
     async function pushToCloudStorage() {
@@ -1007,7 +966,44 @@
             if (response.ok) {
                 const data = await response.json();
                 localStorage.setItem('dolores_active_draft', JSON.stringify(data));
-                loadActiveDraft();
+                
+                // Manually populate fields from pulled data
+                if (data.cloudSyncUrl) document.getElementById('cloudSyncUrl').value = data.cloudSyncUrl;
+                document.getElementById('eventDate').value = data.eventDate || '';
+                document.getElementById('eventName').value = data.eventName || '';
+                document.getElementById('goodFights').value = data.goodFights || '';
+                document.getElementById('plasada').value = data.plasada || '';
+                document.getElementById('prize').value = data.prize || '';
+                document.getElementById('checkedBy').value = data.checkedBy || '';
+
+                const expenseInputs = document.querySelectorAll('.expense-item');
+                if (data.expenses) {
+                    expenseInputs.forEach((inp, idx) => { inp.value = data.expenses[idx] || ''; });
+                }
+
+                document.getElementById('reportTitle').value = data.reportTitle || '';
+                document.getElementById('weeklyReviewNotes').value = data.weeklyReviewNotes || '';
+
+                const dateInputs = document.querySelectorAll('.r-date');
+                const descInputs = document.querySelectorAll('.r-desc');
+                const shareInputs = document.querySelectorAll('.report-share');
+
+                for (let i = 0; i < 7; i++) {
+                    if (data.dates) dateInputs[i].value = data.dates[i] || '';
+                    if (data.descs) descInputs[i].value = data.descs[i] || '';
+                    if (data.shares) shareInputs[i].value = data.shares[i] || '';
+                }
+
+                const dsDates = document.querySelectorAll('.ds-date');
+                const dsNets = document.querySelectorAll('.ds-net');
+                const scDates = document.querySelectorAll('.sc-date');
+                const scNets = document.querySelectorAll('.sc-net');
+
+                if (data.dsDates) dsDates.forEach((inp, idx) => inp.value = data.dsDates[idx] || '');
+                if (data.dsNets) dsNets.forEach((inp, idx) => inp.value = data.dsNets[idx] || '');
+                if (data.scDates) scDates.forEach((inp, idx) => inp.value = data.scDates[idx] || '');
+                if (data.scNets) scNets.forEach((inp, idx) => inp.value = data.scNets[idx] || '');
+
                 calculate();
                 calculateDrawShares(true);
                 calculateShadowShares(true);
