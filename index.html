@@ -473,7 +473,7 @@
                             <tr id="day-row-${i}">
                                 <td style="text-align: center;" class="row-num">${i}</td>
                                 <td>
-                                    <input type="date" class="r-date" readonly>
+                                    <input type="date" class="r-date" onchange="calculateReportTotal()" readonly>
                                     <span class="snapshot-text r-date-snap"></span>
                                 </td>
                                 <td>
@@ -537,11 +537,11 @@
                         document.write(`
                             <tr>
                                 <td>
-                                    <input type="date" class="ds-date" oninput="calculateDrawShares(); saveActiveDraft();">
+                                    <input type="date" class="ds-date" onchange="calculateDrawShares(true); saveActiveDraft();">
                                     <span class="snapshot-text ds-date-snap"></span>
                                 </td>
                                 <td>
-                                    <input type="text" inputmode="decimal" class="ds-net num-input" placeholder="0" oninput="calculateDrawShares(); saveActiveDraft();">
+                                    <input type="text" inputmode="decimal" class="ds-net num-input" placeholder="0" oninput="calculateDrawShares(false); saveActiveDraft();">
                                     <span class="snapshot-text num-input ds-net-snap">0</span>
                                 </td>
                                 <td class="ds-fifty" style="text-align: right;">-</td>
@@ -588,11 +588,11 @@
                         document.write(`
                             <tr>
                                 <td>
-                                    <input type="date" class="sc-date" oninput="calculateShadowShares(); saveActiveDraft();">
+                                    <input type="date" class="sc-date" onchange="calculateShadowShares(true); saveActiveDraft();">
                                     <span class="snapshot-text sc-date-snap"></span>
                                 </td>
                                 <td>
-                                    <input type="text" inputmode="decimal" class="sc-net num-input" placeholder="0" oninput="calculateShadowShares(); saveActiveDraft();">
+                                    <input type="text" inputmode="decimal" class="sc-net num-input" placeholder="0" oninput="calculateShadowShares(false); saveActiveDraft();">
                                     <span class="snapshot-text num-input sc-net-snap">0</span>
                                 </td>
                                 <td class="sc-seventy" style="text-align: right;">-</td>
@@ -755,20 +755,21 @@
         });
     }
 
-    function calculateDrawShares() {
+    function calculateDrawShares(shouldSort = false) {
         const tbody = document.getElementById('drawShareBody');
         const rows = Array.from(tbody.querySelectorAll('tr')).slice(0, 5);
 
-        rows.sort((a, b) => {
-            const dateA = a.querySelector('.ds-date').value;
-            const dateB = b.querySelector('.ds-date').value;
-            if (!dateA && !dateB) return 0;
-            if (!dateA) return 1;
-            if (!dateB) return -1;
-            return dateA.localeCompare(dateB);
-        });
-
-        rows.forEach(row => tbody.insertBefore(row, tbody.lastElementChild));
+        if (shouldSort) {
+            rows.sort((a, b) => {
+                const dateA = a.querySelector('.ds-date').value;
+                const dateB = b.querySelector('.ds-date').value;
+                if (!dateA && !dateB) return 0;
+                if (!dateA) return 1;
+                if (!dateB) return -1;
+                return dateA.localeCompare(dateB);
+            });
+            rows.forEach(row => tbody.insertBefore(row, tbody.lastElementChild));
+        }
 
         const fiftyCells = document.querySelectorAll('.ds-fifty');
         let totalNet = 0;
@@ -794,25 +795,26 @@
     function resetDrawSharesWithPasscode() {
         if (verifyPasscode()) {
             document.querySelectorAll('.ds-date, .ds-net').forEach(input => input.value = '');
-            calculateDrawShares();
+            calculateDrawShares(true);
             saveActiveDraft();
         }
     }
 
-    function calculateShadowShares() {
+    function calculateShadowShares(shouldSort = false) {
         const tbody = document.getElementById('shadowBody');
         const rows = Array.from(tbody.querySelectorAll('tr')).slice(0, 10);
 
-        rows.sort((a, b) => {
-            const dateA = a.querySelector('.sc-date').value;
-            const dateB = b.querySelector('.sc-date').value;
-            if (!dateA && !dateB) return 0;
-            if (!dateA) return 1;
-            if (!dateB) return -1;
-            return dateA.localeCompare(dateB);
-        });
-
-        rows.forEach(row => tbody.insertBefore(row, tbody.lastElementChild));
+        if (shouldSort) {
+            rows.sort((a, b) => {
+                const dateA = a.querySelector('.sc-date').value;
+                const dateB = b.querySelector('.sc-date').value;
+                if (!dateA && !dateB) return 0;
+                if (!dateA) return 1;
+                if (!dateB) return -1;
+                return dateA.localeCompare(dateB);
+            });
+            rows.forEach(row => tbody.insertBefore(row, tbody.lastElementChild));
+        }
 
         const seventyCells = document.querySelectorAll('.sc-seventy');
         const thirtyCells = document.querySelectorAll('.sc-thirty');
@@ -845,7 +847,7 @@
     function resetShadowSharesWithPasscode() {
         if (verifyPasscode()) {
             document.querySelectorAll('.sc-date, .sc-net').forEach(input => input.value = '');
-            calculateShadowShares();
+            calculateShadowShares(true);
             saveActiveDraft();
         }
     }
@@ -1007,8 +1009,8 @@
                 localStorage.setItem('dolores_active_draft', JSON.stringify(data));
                 loadActiveDraft();
                 calculate();
-                calculateDrawShares();
-                calculateShadowShares();
+                calculateDrawShares(true);
+                calculateShadowShares(true);
                 calculateReportTotal();
                 alert("Successfully pulled and updated data from cloud storage!");
             } else {
@@ -1149,8 +1151,8 @@
 
         loadActiveDraft();
         calculate();
-        calculateDrawShares();
-        calculateShadowShares();
+        calculateDrawShares(true);
+        calculateShadowShares(true);
         calculateReportTotal();
     });
 </script>
