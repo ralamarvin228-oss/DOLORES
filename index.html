@@ -836,6 +836,7 @@
         if (role === 'viewer') {
             if (passcode === 'dolores123') {
                 currentRole = 'viewer';
+                localStorage.setItem('dolores_user_role', currentRole);
                 initSession();
             } else {
                 alert('Incorrect Viewer passcode!');
@@ -843,6 +844,7 @@
         } else if (role === 'admin') {
             if (passcode === 'spiderman') {
                 currentRole = 'admin';
+                localStorage.setItem('dolores_user_role', currentRole);
                 initSession();
             } else {
                 alert('Incorrect Admin passcode!');
@@ -881,6 +883,7 @@
 
     function logoutPortal() {
         currentRole = null;
+        localStorage.removeItem('dolores_user_role');
         document.getElementById('loginPasscode').value = '';
         document.getElementById('sessionBar').style.display = 'none';
         document.getElementById('loginOverlay').style.display = 'flex';
@@ -1241,6 +1244,13 @@
     }
 
     window.addEventListener('DOMContentLoaded', () => {
+        // Check if user was previously logged in
+        const savedRole = localStorage.getItem('dolores_user_role');
+        if (savedRole === 'admin' || savedRole === 'viewer') {
+            currentRole = savedRole;
+            initSession();
+        }
+
         loadActiveDraft();
         calculate();
         calculateDrawShares();
