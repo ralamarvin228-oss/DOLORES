@@ -850,6 +850,14 @@
         }
     }
 
+    // Add Enter key listener specifically for the login passcode input field
+    document.getElementById('loginPasscode').addEventListener('keydown', function(e) {
+        if (e.key === 'Enter') {
+            e.preventDefault();
+            handleLogin();
+        }
+    });
+
     function initSession() {
         document.getElementById('loginOverlay').style.display = 'none';
         document.getElementById('sessionBar').style.display = 'flex';
