@@ -1,0 +1,1244 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Dolores Sports Arena - Financial Statement & Weekly Report</title>
+    <!-- Include html2canvas library for capturing DOM elements as images -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+    <style>
+        :root {
+            --primary-red: #cc0000;
+            --dark-red: #990000;
+            --plasada-green: #00b050;
+            --bg-gray: #f4f6f9;
+            --border-color: #333333;
+        }
+
+        * {
+            box-sizing: border-box;
+            font-family: Arial, Helvetica, sans-serif;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        body {
+            background-color: var(--bg-gray);
+            margin: 0;
+            padding: 10px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 20px;
+        }
+
+        /* --- LOGIN PORTAL MODAL --- */
+        #loginOverlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.85);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 9999;
+        }
+
+        .login-card {
+            background: #ffffff;
+            width: 100%;
+            max-width: 400px;
+            padding: 25px;
+            border-radius: 8px;
+            border: 3px solid var(--primary-red);
+            box-shadow: 0 8px 25px rgba(0,0,0,0.3);
+            text-align: center;
+        }
+
+        .login-card h2 {
+            margin-top: 0;
+            color: var(--primary-red);
+            text-transform: uppercase;
+            font-size: 22px;
+            margin-bottom: 15px;
+        }
+
+        .login-card select, .login-card input {
+            width: 100%;
+            padding: 10px;
+            margin-bottom: 15px;
+            font-size: 15px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            background: #fafafa;
+        }
+
+        .login-card button {
+            width: 100%;
+            padding: 12px;
+            background-color: var(--primary-red);
+            color: white;
+            border: none;
+            font-weight: bold;
+            font-size: 16px;
+            border-radius: 4px;
+            cursor: pointer;
+            text-transform: uppercase;
+        }
+
+        .login-card button:hover {
+            background-color: var(--dark-red);
+        }
+
+        /* Top Bar User Session info */
+        .session-bar {
+            width: 100%;
+            max-width: 950px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background: #222;
+            color: #fff;
+            padding: 8px 15px;
+            border-radius: 4px;
+            font-size: 14px;
+            font-weight: bold;
+        }
+
+        .session-bar button {
+            background: #dc3545;
+            color: white;
+            border: none;
+            padding: 5px 10px;
+            border-radius: 3px;
+            cursor: pointer;
+            font-size: 12px;
+        }
+
+        .sheet-container, .report-container, .storage-container {
+            width: 100%;
+            max-width: 950px;
+            background: #ffffff;
+            border: 2px solid var(--border-color);
+            padding: 15px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.15);
+            box-sizing: border-box;
+            border-radius: 6px;
+        }
+
+        /* Banner */
+        .banner {
+            background-color: var(--primary-red);
+            color: #ffffff;
+            text-align: center;
+            font-size: 22px;
+            font-weight: 900;
+            letter-spacing: 1px;
+            padding: 10px 5px;
+            text-transform: uppercase;
+            margin-bottom: 15px;
+            border-radius: 4px;
+        }
+
+        /* Top Meta Fields */
+        .meta-grid {
+            display: grid;
+            grid-template-columns: 110px 1fr;
+            gap: 10px 10px;
+            margin-bottom: 20px;
+            font-weight: bold;
+            align-items: center;
+        }
+
+        .meta-grid input {
+            font-size: 15px;
+            padding: 8px;
+            border: 1px solid #ccc;
+            outline: none;
+            width: 100%;
+            max-width: 300px;
+            background: #fafafa;
+            border-radius: 3px;
+        }
+
+        /* Main Grid Layout */
+        .main-layout {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+        }
+
+        /* Responsive Breakpoint for Mobile Display */
+        @media (max-width: 768px) {
+            body {
+                padding: 8px;
+            }
+
+            .sheet-container:not(.force-landscape), 
+            .report-container:not(.force-landscape),
+            .storage-container:not(.force-landscape) {
+                padding: 10px;
+            }
+
+            .sheet-container:not(.force-landscape) .banner,
+            .report-container:not(.force-landscape) .banner {
+                font-size: 20px;
+            }
+
+            .sheet-container:not(.force-landscape) .main-layout {
+                grid-template-columns: 1fr;
+            }
+
+            .sheet-container:not(.force-landscape) .meta-grid {
+                grid-template-columns: 1fr;
+                gap: 5px;
+            }
+
+            .sheet-container:not(.force-landscape) .meta-grid input {
+                max-width: 100%;
+                margin-bottom: 8px;
+            }
+
+            .sheet-container:not(.force-landscape) .signature-area {
+                margin: 30px auto 10px auto !important;
+            }
+        }
+
+        /* Forces Landscape View & Snapshot Viewability during image capture */
+        .force-landscape {
+            width: 950px !important;
+            max-width: 950px !important;
+            padding: 25px !important;
+            background: #ffffff !important;
+        }
+
+        .force-landscape .main-layout {
+            grid-template-columns: 1fr 1fr !important;
+            gap: 25px !important;
+        }
+
+        .force-landscape .meta-grid {
+            grid-template-columns: 120px 1fr !important;
+            gap: 8px 15px !important;
+        }
+
+        .force-landscape .meta-grid input {
+            width: 250px !important;
+        }
+
+        .force-landscape .banner {
+            font-size: 28px !important;
+        }
+
+        .force-landscape input, 
+        .force-landscape textarea, 
+        .force-landscape select,
+        .force-landscape .actions,
+        .force-landscape .actions-ignore {
+            display: none !important;
+        }
+
+        .snapshot-text {
+            display: none;
+            font-size: 15px;
+            font-weight: bold;
+            color: #000000;
+            padding: 4px 2px;
+            word-break: break-word;
+        }
+
+        .force-landscape .snapshot-text {
+            display: block !important;
+        }
+
+        .force-landscape textarea + .snapshot-text {
+            white-space: pre-wrap;
+        }
+
+        .force-landscape input.num-input + .snapshot-text,
+        .force-landscape td input.num-input + .snapshot-text {
+            text-align: right;
+        }
+
+        .force-landscape .meta-grid input + .snapshot-text {
+            max-width: 300px;
+        }
+
+        .section-title {
+            background-color: var(--primary-red);
+            color: white;
+            font-weight: bold;
+            text-align: center;
+            padding: 8px;
+            text-transform: uppercase;
+            font-size: 15px;
+            margin-bottom: 10px;
+            border-radius: 3px;
+        }
+
+        .table-responsive {
+            width: 100%;
+            overflow-x: auto;
+            -webkit-overflow-scrolling: touch;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            min-width: 300px;
+        }
+
+        table td, table th {
+            padding: 8px 6px;
+            border: 1px solid #333;
+            font-weight: bold;
+            font-size: 14px;
+        }
+
+        table th {
+            background-color: #f0f0f0;
+            text-align: center;
+        }
+
+        input[type="number"], input[type="text"], input[type="date"], select, textarea {
+            width: 100%;
+            border: none;
+            outline: none;
+            font-size: 15px;
+            font-weight: bold;
+            background: transparent;
+            padding: 4px 2px;
+        }
+
+        input[type=number]::-webkit-inner-spin-button, 
+        input[type=number]::-webkit-outer-spin-button { 
+            -webkit-appearance: none; 
+            margin: 0; 
+        }
+
+        input[type=number] {
+            -moz-appearance: textfield;
+        }
+
+        input.num-input {
+            text-align: right;
+        }
+
+        input.r-date[readonly], input.r-desc[readonly], input.report-share[readonly] {
+            cursor: not-allowed;
+            color: #333;
+            background-color: #f9f9f9;
+        }
+
+        .label-cell {
+            text-transform: uppercase;
+        }
+
+        .plasada-bg {
+            background-color: var(--plasada-green);
+            color: white;
+        }
+
+        .prize-bg {
+            background-color: var(--primary-red);
+            color: white;
+        }
+
+        .summary-box {
+            margin-top: 20px;
+        }
+
+        .summary-row {
+            display: flex;
+            justify-content: space-between;
+            border: 1px solid #333;
+            padding: 10px;
+            font-weight: bold;
+            font-size: 16px;
+            margin-bottom: 10px;
+            background: #fdfdfd;
+        }
+
+        .negative-val {
+            color: #d9534f !important;
+        }
+
+        .positive-val {
+            color: #000000 !important;
+        }
+
+        .signature-area {
+            margin-top: 35px;
+            width: 220px;
+            text-align: center;
+        }
+
+        .signature-line {
+            border-top: 2px solid #000;
+            padding-top: 5px;
+            font-weight: bold;
+        }
+
+        .signature-title {
+            font-style: italic;
+            font-weight: bold;
+            font-size: 13px;
+        }
+
+        .report-header {
+            font-size: 18px;
+            font-weight: bold;
+            margin-bottom: 5px;
+            color: var(--dark-red);
+            text-transform: uppercase;
+            border-bottom: 2px solid var(--dark-red);
+            padding-bottom: 5px;
+        }
+
+        .report-subhead {
+            font-size: 11px;
+            color: #666;
+            margin-bottom: 15px;
+            font-style: italic;
+        }
+
+        .history-bar {
+            background: #e9ecef;
+            border: 1px solid #ccc;
+            padding: 12px;
+            margin-bottom: 15px;
+            display: flex;
+            gap: 10px;
+            align-items: stretch;
+            flex-direction: column;
+            border-radius: 4px;
+        }
+
+        .history-bar label {
+            font-weight: bold;
+            font-size: 14px;
+        }
+
+        .history-bar select, .history-bar input {
+            border: 1px solid #888;
+            background: #fff;
+            padding: 8px;
+            font-weight: normal;
+            width: 100%;
+            border-radius: 4px;
+        }
+
+        .actions {
+            margin-top: 20px;
+            display: flex;
+            gap: 10px;
+            justify-content: flex-end;
+            flex-wrap: wrap;
+        }
+
+        .btn {
+            padding: 12px 16px;
+            font-size: 14px;
+            font-weight: bold;
+            border: none;
+            cursor: pointer;
+            border-radius: 5px;
+            color: white;
+            flex: 1 1 auto;
+            text-align: center;
+            min-height: 44px;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .btn-sm {
+            padding: 6px 10px;
+            font-size: 12px;
+            border-radius: 3px;
+            min-height: 36px;
+            width: 100%;
+        }
+
+        .btn-photo { background-color: #28a745; }
+        .btn-reset { background-color: #6c757d; }
+        .btn-save { background-color: #007bff; }
+        .btn-send { background-color: #17a2b8; }
+        .btn-delete { background-color: #dc3545; }
+        .btn-warning { background-color: #ff9800; }
+        .btn-storage { background-color: #6610f2; }
+
+        .shares-header {
+            background-color: var(--primary-red);
+            color: white;
+            font-weight: 900;
+            text-align: center;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+    </style>
+</head>
+<body>
+
+<!-- LOGIN PORTAL OVERLAY -->
+<div id="loginOverlay">
+    <div class="login-card">
+        <h2>Portal Login</h2>
+        <select id="loginRole">
+            <option value="viewer">Viewer Mode (Read-Only)</option>
+            <option value="admin">Admin Mode (Full Access)</option>
+        </select>
+        <input type="password" id="loginPasscode" placeholder="Enter Passcode">
+        <button onclick="handleLogin()">Log In</button>
+    </div>
+</div>
+
+<!-- USER SESSION HEADER BAR -->
+<div class="session-bar" id="sessionBar" style="display: none;">
+    <span id="sessionStatusText">Logged in as: Viewer</span>
+    <button onclick="logoutPortal()">Log Out</button>
+</div>
+
+<!-- DATA STORAGE & BACKUP MANAGEMENT PANEL -->
+<div class="storage-container actions-ignore admin-only">
+    <div class="report-header" style="color: #6610f2; border-color: #6610f2;">Local Storage & Backup Manager</div>
+    <div class="report-subhead">Your data is stored automatically in your browser. You can also export or import backup files.</div>
+    <div class="actions" style="margin-top: 10px; justify-content: flex-start;">
+        <button class="btn btn-storage" onclick="exportDataFile()">Export Backup File (.json)</button>
+        <label class="btn btn-storage" style="cursor: pointer; margin: 0;">
+            Import Backup File <input type="file" id="importFile" accept=".json" style="display: none;" onchange="importDataFile(event)">
+        </label>
+        <button class="btn btn-delete" onclick="clearAllStorageWithPasscode()">Clear All Data</button>
+    </div>
+</div>
+
+<!-- MAIN ARENA SETTLEMENT FORM -->
+<div class="sheet-container" id="settlementSheet">
+    <div class="banner">Dolores Sports Arena</div>
+
+    <div class="meta-grid">
+        <div>DATE:</div>
+        <div>
+            <input type="date" id="eventDate" oninput="saveActiveDraft()">
+            <span class="snapshot-text" id="snap-eventDate"></span>
+        </div>
+        <div>EVENT:</div>
+        <div>
+            <input type="text" id="eventName" placeholder="Event Name" oninput="saveActiveDraft()">
+            <span class="snapshot-text" id="snap-eventName"></span>
+        </div>
+        <div>GOOD FIGHTS:</div>
+        <div>
+            <input type="text" id="goodFights" placeholder="Optional notes..." oninput="saveActiveDraft()">
+            <span class="snapshot-text" id="snap-goodFights"></span>
+        </div>
+    </div>
+
+    <div class="main-layout">
+        <div>
+            <div class="table-responsive">
+                <table>
+                    <tr>
+                        <td class="label-cell plasada-bg">PLASADA</td>
+                        <td>
+                            <input type="number" id="plasada" class="num-input" placeholder="0" oninput="calculate(); saveActiveDraft();">
+                            <span class="snapshot-text" id="snap-plasada">0</span>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td class="label-cell prize-bg">PRIZE</td>
+                        <td>
+                            <input type="number" id="prize" class="num-input" placeholder="0" oninput="calculate(); saveActiveDraft();">
+                            <span class="snapshot-text" id="snap-prize">0</span>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td class="label-cell">SALARY/EXP.</td>
+                        <td>
+                            <input type="text" id="salaryExpDisplay" class="num-input" readonly value="0">
+                            <span class="snapshot-text num-input" id="snap-salaryExpDisplay">0</span>
+                        </td>
+                    </tr>
+                </table>
+            </div>
+
+            <div class="summary-box">
+                <div class="summary-row">
+                    <span>TOTAL</span>
+                    <span id="totalDisplay" class="positive-val">0</span>
+                </div>
+
+                <div class="table-responsive">
+                    <table>
+                        <tr>
+                            <td class="label-cell">PROGRAMMER 5%</td>
+                            <td id="progShareDisplay" class="positive-val" style="text-align: right;">0</td>
+                        </tr>
+                        <tr>
+                            <td class="label-cell">MANAGEMENT 95%</td>
+                            <td id="mgmtShareDisplay" class="positive-val" style="text-align: right;">0</td>
+                        </tr>
+                    </table>
+                </div>
+            </div>
+
+            <div class="signature-area">
+                <div>
+                    <input type="text" id="checkedBy" placeholder="Checker Name" style="text-align: center; font-size: 15px; border-bottom: 1px solid #ccc;" oninput="saveActiveDraft()">
+                    <span class="snapshot-text" id="snap-checkedBy" style="text-align: center; border-bottom: 1px solid #000;"></span>
+                </div>
+                <div class="signature-line"></div>
+                <div class="signature-title">CHECKED BY</div>
+            </div>
+        </div>
+
+        <div>
+            <div class="section-title">Salary & Expenses</div>
+            <div class="table-responsive">
+                <table>
+                    <tr>
+                        <td class="label-cell">TELLER</td>
+                        <td><input type="number" class="expense-item num-input" placeholder="0" oninput="calculate(); saveActiveDraft();"><span class="snapshot-text num-input exp-snap">0</span></td>
+                    </tr>
+                    <tr>
+                        <td class="label-cell">ADMIN</td>
+                        <td><input type="number" class="expense-item num-input" placeholder="0" oninput="calculate(); saveActiveDraft();"><span class="snapshot-text num-input exp-snap">0</span></td>
+                    </tr>
+                    <tr>
+                        <td class="label-cell">I.T.</td>
+                        <td><input type="number" class="expense-item num-input" placeholder="0" oninput="calculate(); saveActiveDraft();"><span class="snapshot-text num-input exp-snap">0</span></td>
+                    </tr>
+                    <tr>
+                        <td class="label-cell">I.T. MEAL</td>
+                        <td><input type="number" class="expense-item num-input" placeholder="0" oninput="calculate(); saveActiveDraft();"><span class="snapshot-text num-input exp-snap">0</span></td>
+                    </tr>
+                    <tr>
+                        <td class="label-cell">RUNNER</td>
+                        <td><input type="number" class="expense-item num-input" placeholder="0" oninput="calculate(); saveActiveDraft();"><span class="snapshot-text num-input exp-snap">0</span></td>
+                    </tr>
+                    <tr>
+                        <td class="label-cell">SECURITY</td>
+                        <td><input type="number" class="expense-item num-input" placeholder="0" oninput="calculate(); saveActiveDraft();"><span class="snapshot-text num-input exp-snap">0</span></td>
+                    </tr>
+                    <tr>
+                        <td class="label-cell">ELECTRIC</td>
+                        <td><input type="number" class="expense-item num-input" placeholder="0" oninput="calculate(); saveActiveDraft();"><span class="snapshot-text num-input exp-snap">0</span></td>
+                    </tr>
+                    <tr>
+                        <td class="label-cell">THERMAL</td>
+                        <td><input type="number" class="expense-item num-input" placeholder="0" oninput="calculate(); saveActiveDraft();"><span class="snapshot-text num-input exp-snap">0</span></td>
+                    </tr>
+                    <tr>
+                        <td class="label-cell">S.P.</td>
+                        <td><input type="number" class="expense-item num-input" placeholder="0" oninput="calculate(); saveActiveDraft();"><span class="snapshot-text num-input exp-snap">0</span></td>
+                    </tr>
+                    <tr>
+                        <td class="label-cell" style="text-align: right; font-weight: 900;">TOTAL</td>
+                        <td id="expenseTotalDisplay" style="text-align: right; font-weight: 900;">0</td>
+                    </tr>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <div class="actions">
+        <button class="btn btn-reset admin-only" onclick="resetForm()">Reset Form</button>
+        <button class="btn btn-photo" onclick="saveAsPhoto('settlementSheet', 'Dolores_Settlement_Sheet.png')">Save as Photo</button>
+        <button class="btn btn-send admin-only" onclick="sendToReport()">Send to Weekly Report</button>
+    </div>
+</div>
+
+<!-- SEPARATE REPORT 1: DRAW SHARE (DOLORES) - 5 ROWS -->
+<div class="report-container" id="drawShareSheet">
+    <div class="report-header">Draw Share Report</div>
+    <div class="report-subhead">* Input dates and Net Gains to automatically calculate the 50% split for Draw Share.</div>
+
+    <div class="table-responsive">
+        <table>
+            <thead>
+                <tr>
+                    <th colspan="3" class="shares-header">DRAW SHARE (DOLORES)</th>
+                </tr>
+                <tr>
+                    <th style="width: 35%;">DATE</th>
+                    <th style="width: 35%;">NET GAIN</th>
+                    <th style="width: 30%;">50%</th>
+                </tr>
+            </thead>
+            <tbody id="drawShareBody">
+                <script>
+                    for (let i = 1; i <= 5; i++) {
+                        document.write(`
+                            <tr>
+                                <td>
+                                    <input type="date" class="ds-date" oninput="calculateDrawShares(); saveActiveDraft();">
+                                    <span class="snapshot-text ds-date-snap"></span>
+                                </td>
+                                <td>
+                                    <input type="number" class="ds-net num-input" placeholder="0" oninput="calculateDrawShares(); saveActiveDraft();">
+                                    <span class="snapshot-text num-input ds-net-snap">0</span>
+                                </td>
+                                <td class="ds-fifty" style="text-align: right;">-</td>
+                            </tr>
+                        `);
+                    }
+                </script>
+                <tr>
+                    <td style="text-align: center; font-weight: 900;">TOTAL</td>
+                    <td id="dsNetTotalDisplay" style="text-align: right; font-weight: 900;">0</td>
+                    <td id="dsFiftyTotalDisplay" style="text-align: right; font-weight: 900;">0</td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+
+    <div class="actions">
+        <button class="btn btn-reset admin-only" onclick="resetDrawSharesWithPasscode()">Reset Draw Share</button>
+        <button class="btn btn-photo" onclick="saveAsPhoto('drawShareSheet', 'Draw_Share_Dolores.png')">Save Draw Share as Photo</button>
+    </div>
+</div>
+
+<!-- SEPARATE REPORT 2: SHADOW COLLECTIVE (DOLORES) - 10 ROWS -->
+<div class="report-container" id="shadowSheet">
+    <div class="report-header">Shadow Collective Report</div>
+    <div class="report-subhead">* Input dates and Net Gains to automatically calculate the 70% and 30% splits.</div>
+
+    <div class="table-responsive">
+        <table>
+            <thead>
+                <tr>
+                    <th colspan="4" class="shares-header">SHADOW COLLECTIVE (DOLORES)</th>
+                </tr>
+                <tr>
+                    <th style="width: 28%;">DATE</th>
+                    <th style="width: 28%;">NET GAIN</th>
+                    <th style="width: 22%;">70%</th>
+                    <th style="width: 22%;">30%</th>
+                </tr>
+            </thead>
+            <tbody id="shadowBody">
+                <script>
+                    for (let i = 1; i <= 10; i++) {
+                        document.write(`
+                            <tr>
+                                <td>
+                                    <input type="date" class="sc-date" oninput="calculateShadowShares(); saveActiveDraft();">
+                                    <span class="snapshot-text sc-date-snap"></span>
+                                </td>
+                                <td>
+                                    <input type="number" class="sc-net num-input" placeholder="0" oninput="calculateShadowShares(); saveActiveDraft();">
+                                    <span class="snapshot-text num-input sc-net-snap">0</span>
+                                </td>
+                                <td class="sc-seventy" style="text-align: right;">-</td>
+                                <td class="sc-thirty" style="text-align: right;">-</td>
+                            </tr>
+                        `);
+                    }
+                </script>
+                <tr>
+                    <td style="text-align: center; font-weight: 900;">TOTAL</td>
+                    <td id="scNetTotalDisplay" style="text-align: right; font-weight: 900;">0</td>
+                    <td id="scSeventyTotalDisplay" style="text-align: right; font-weight: 900;">0</td>
+                    <td id="scThirtyTotalDisplay" style="text-align: right; font-weight: 900;">0</td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+
+    <div class="actions">
+        <button class="btn btn-reset admin-only" onclick="resetShadowSharesWithPasscode()">Reset Shadow Collective</button>
+        <button class="btn btn-photo" onclick="saveAsPhoto('shadowSheet', 'Shadow_Collective_Dolores.png')">Save Shadow Collective as Photo</button>
+    </div>
+</div>
+
+<!-- WEEKLY PROGRAMMER SHARE REPORT (7 DAYS) -->
+<div class="report-container" id="reportSheet">
+    <div class="report-header">Weekly Programmer Share Report</div>
+    <div class="report-subhead">* Date, Event Description, and Programmer Share fields are locked against manual edits. Negative values are excluded from the total payout.</div>
+
+    <div class="history-bar actions-ignore">
+        <label for="reportHistorySelect">Review Past Weekly Reports:</label>
+        <select id="reportHistorySelect" onchange="loadSelectedReport()">
+            <option value="current">-- Active Weekly Working Draft --</option>
+        </select>
+        <input type="text" id="reportTitle" placeholder="Report Title (e.g., Week 1 Batch)" oninput="saveActiveDraft()">
+        <span class="snapshot-text" id="snap-reportTitle"></span>
+    </div>
+
+    <div class="table-responsive">
+        <table>
+            <thead>
+                <tr>
+                    <th style="width: 5%;">#</th>
+                    <th style="width: 25%;">Date</th>
+                    <th style="width: 28%;">Event Description</th>
+                    <th style="width: 22%;">Programmer 5% Share</th>
+                    <th style="width: 20%;" class="actions-ignore admin-only">Action</th>
+                </tr>
+            </thead>
+            <tbody id="reportTableBody">
+                <script>
+                    for (let i = 1; i <= 7; i++) {
+                        document.write(`
+                            <tr id="day-row-${i}">
+                                <td style="text-align: center;">${i}</td>
+                                <td>
+                                    <input type="date" class="r-date" readonly>
+                                    <span class="snapshot-text r-date-snap"></span>
+                                </td>
+                                <td>
+                                    <input type="text" class="r-desc" placeholder="Empty" readonly>
+                                    <span class="snapshot-text r-desc-snap"></span>
+                                </td>
+                                <td>
+                                    <input type="number" class="report-share num-input" placeholder="0" readonly>
+                                    <span class="snapshot-text num-input r-share-snap">0</span>
+                                </td>
+                                <td style="text-align: center;" class="actions-ignore admin-only">
+                                    <button class="btn btn-warning btn-sm" onclick="resetSingleDayWithPasscode(${i})">Reset Day ${i}</button>
+                                </td>
+                            </tr>
+                        `);
+                    }
+                </script>
+                <tr>
+                    <td colspan="3" style="text-align: right; font-weight: 900;">TOTAL WEEKLY PAYOUT:</td>
+                    <td id="reportTotalDisplay" style="text-align: right; font-weight: 900; font-size: 16px;">0</td>
+                    <td class="actions-ignore admin-only"></td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+
+    <div style="margin-top: 15px;">
+        <label style="font-size: 13px; font-weight: bold; color: #333; text-transform: uppercase; display: block; margin-bottom: 5px;">Management Review Notes / Remarks:</label>
+        <textarea id="weeklyReviewNotes" placeholder="Enter week remarks, adjustments, or audit notes here..." rows="2" style="width: 100%; border: 1px solid #333; padding: 8px; font-size: 14px; border-radius: 4px; resize: vertical; background: #fafafa;" oninput="saveActiveDraft()"></textarea>
+        <span class="snapshot-text" id="snap-weeklyReviewNotes" style="border: 1px solid #333; padding: 8px; min-height: 40px; background: #fafafa;"></span>
+    </div>
+
+    <div class="actions">
+        <button class="btn btn-reset admin-only" onclick="resetAllDaysWithPasscode()">Reset All Days</button>
+        <button class="btn btn-save admin-only" onclick="saveReportToHistory()">Save Weekly Batch</button>
+        <button class="btn btn-delete admin-only" onclick="deleteSelectedReportWithPasscode()">Delete Weekly Batch</button>
+        <button class="btn btn-photo" onclick="saveAsPhoto('reportSheet', 'Weekly_Programmer_Report.png')">Save Weekly Report as Photo</button>
+    </div>
+</div>
+
+<script>
+    const ACTION_PASSCODE = "spiderman";
+    let currentRole = null;
+
+    function handleLogin() {
+        const role = document.getElementById('loginRole').value;
+        const passcode = document.getElementById('loginPasscode').value;
+
+        if (role === 'viewer') {
+            if (passcode === 'dolores123') {
+                currentRole = 'viewer';
+                initSession();
+            } else {
+                alert('Incorrect Viewer passcode!');
+            }
+        } else if (role === 'admin') {
+            if (passcode === 'spiderman') {
+                currentRole = 'admin';
+                initSession();
+            } else {
+                alert('Incorrect Admin passcode!');
+            }
+        }
+    }
+
+    function initSession() {
+        document.getElementById('loginOverlay').style.display = 'none';
+        document.getElementById('sessionBar').style.display = 'flex';
+        document.getElementById('sessionStatusText').textContent = `Logged in as: ${currentRole.toUpperCase()}`;
+
+        const adminElements = document.querySelectorAll('.admin-only');
+        if (currentRole === 'viewer') {
+            document.querySelectorAll('input, textarea, select').forEach(el => {
+                if(el.id !== 'reportHistorySelect' && el.id !== 'loginRole' && el.id !== 'loginPasscode') {
+                    el.setAttribute('disabled', 'true');
+                }
+            });
+            adminElements.forEach(el => el.style.display = 'none');
+        } else {
+            document.querySelectorAll('input, textarea, select').forEach(el => {
+                el.removeAttribute('disabled');
+            });
+            adminElements.forEach(el => el.style.display = '');
+        }
+    }
+
+    function logoutPortal() {
+        currentRole = null;
+        document.getElementById('loginPasscode').value = '';
+        document.getElementById('sessionBar').style.display = 'none';
+        document.getElementById('loginOverlay').style.display = 'flex';
+    }
+
+    function verifyPasscode() {
+        if (currentRole === 'viewer') {
+            alert("Action restricted! Viewer mode is read-only.");
+            return false;
+        }
+        const input = prompt("Enter passcode to perform this action:");
+        if (input === null) return false;
+        if (input === ACTION_PASSCODE) {
+            return true;
+        } else {
+            alert("Incorrect passcode! Action canceled.");
+            return false;
+        }
+    }
+
+    function formatNumber(num) {
+        if (!num && num !== 0) return '-';
+        return Math.round(num).toLocaleString('en-US');
+    }
+
+    document.addEventListener('keydown', function(e) {
+        if (currentRole === 'viewer') return;
+        if (e.key === 'Enter') {
+            const target = e.target;
+            if (target.tagName === 'INPUT' && !target.readOnly && target.type !== 'file' && target.type !== 'button' && target.type !== 'submit') {
+                e.preventDefault();
+                const editableInputs = Array.from(document.querySelectorAll('input:not([readonly]):not([type="hidden"]):not([type="file"]):not([disabled])'));
+                const currentIndex = editableInputs.indexOf(target);
+                if (currentIndex > -1 && currentIndex < editableInputs.length - 1) {
+                    const nextInput = editableInputs[currentIndex + 1];
+                    nextInput.focus();
+                    if (typeof nextInput.select === 'function') {
+                        nextInput.select();
+                    }
+                }
+            }
+        }
+    });
+
+    function calculate() {
+        const expenseInputs = document.querySelectorAll('.expense-item');
+        let totalExpenses = 0;
+        expenseInputs.forEach(input => {
+            totalExpenses += Number(input.value) || 0;
+        });
+
+        const plasada = Number(document.getElementById('plasada').value) || 0;
+        const prize = Number(document.getElementById('prize').value) || 0;
+        const netTotal = plasada - prize - totalExpenses;
+
+        const progShare = netTotal * 0.05;
+        const mgmtShare = netTotal * 0.95;
+
+        document.getElementById('expenseTotalDisplay').textContent = formatNumber(totalExpenses);
+        document.getElementById('salaryExpDisplay').value = formatNumber(totalExpenses);
+
+        const totalDisplay = document.getElementById('totalDisplay');
+        const progDisplay = document.getElementById('progShareDisplay');
+        const mgmtDisplay = document.getElementById('mgmtShareDisplay');
+
+        totalDisplay.textContent = formatNumber(netTotal);
+        progDisplay.textContent = formatNumber(progShare);
+        mgmtDisplay.textContent = formatNumber(mgmtShare);
+
+        [totalDisplay, progDisplay, mgmtDisplay].forEach(el => {
+            if (netTotal < 0) {
+                el.classList.add('negative-val');
+                el.classList.remove('positive-val');
+            } else {
+                el.classList.add('positive-val');
+                el.classList.remove('negative-val');
+            }
+        });
+    }
+
+    function calculateDrawShares() {
+        const netInputs = document.querySelectorAll('.ds-net');
+        const fiftyCells = document.querySelectorAll('.ds-fifty');
+
+        let totalNet = 0;
+        let totalFifty = 0;
+
+        netInputs.forEach((input, i) => {
+            const val = input.value !== "" ? Number(input.value) : null;
+            if (val !== null && !isNaN(val)) {
+                const fifty = val * 0.50;
+                fiftyCells[i].textContent = formatNumber(fifty);
+                totalNet += val;
+                totalFifty += fifty;
+            } else {
+                fiftyCells[i].textContent = '-';
+            }
+        });
+
+        document.getElementById('dsNetTotalDisplay').textContent = formatNumber(totalNet);
+        document.getElementById('dsFiftyTotalDisplay').textContent = formatNumber(totalFifty);
+    }
+
+    function resetDrawSharesWithPasscode() {
+        if (verifyPasscode()) {
+            document.querySelectorAll('.ds-date, .ds-net').forEach(input => input.value = '');
+            calculateDrawShares();
+            saveActiveDraft();
+        }
+    }
+
+    function calculateShadowShares() {
+        const netInputs = document.querySelectorAll('.sc-net');
+        const seventyCells = document.querySelectorAll('.sc-seventy');
+        const thirtyCells = document.querySelectorAll('.sc-thirty');
+
+        let totalNet = 0;
+        let totalSeventy = 0;
+        let totalThirty = 0;
+
+        netInputs.forEach((input, i) => {
+            const val = input.value !== "" ? Number(input.value) : null;
+            if (val !== null && !isNaN(val)) {
+                const seventy = val * 0.70;
+                const thirty = val * 0.30;
+                seventyCells[i].textContent = formatNumber(seventy);
+                thirtyCells[i].textContent = formatNumber(thirty);
+                totalNet += val;
+                totalSeventy += seventy;
+                totalThirty += thirty;
+            } else {
+                seventyCells[i].textContent = '-';
+                thirtyCells[i].textContent = '-';
+            }
+        });
+
+        document.getElementById('scNetTotalDisplay').textContent = formatNumber(totalNet);
+        document.getElementById('scSeventyTotalDisplay').textContent = formatNumber(totalSeventy);
+        document.getElementById('scThirtyTotalDisplay').textContent = formatNumber(totalThirty);
+    }
+
+    function resetShadowSharesWithPasscode() {
+        if (verifyPasscode()) {
+            document.querySelectorAll('.sc-date, .sc-net').forEach(input => input.value = '');
+            calculateShadowShares();
+            saveActiveDraft();
+        }
+    }
+
+    function calculateReportTotal() {
+        const reportInputs = document.querySelectorAll('.report-share');
+        let totalPayout = 0;
+
+        reportInputs.forEach(input => {
+            const val = Number(input.value) || 0;
+            if (val < 0) {
+                input.classList.add('negative-val');
+                input.classList.remove('positive-val');
+            } else {
+                input.classList.add('positive-val');
+                input.classList.remove('negative-val');
+            }
+
+            if (val > 0) {
+                totalPayout += val;
+            }
+        });
+
+        document.getElementById('reportTotalDisplay').textContent = formatNumber(totalPayout);
+    }
+
+    function saveActiveDraft() {
+        if (currentRole === 'viewer') return;
+        const draft = {
+            eventDate: document.getElementById('eventDate').value,
+            eventName: document.getElementById('eventName').value,
+            goodFights: document.getElementById('goodFights').value,
+            plasada: document.getElementById('plasada').value,
+            prize: document.getElementById('prize').value,
+            checkedBy: document.getElementById('checkedBy').value,
+            expenses: Array.from(document.querySelectorAll('.expense-item')).map(i => i.value),
+            reportTitle: document.getElementById('reportTitle').value,
+            weeklyReviewNotes: document.getElementById('weeklyReviewNotes').value,
+            dates: Array.from(document.querySelectorAll('.r-date')).map(i => i.value),
+            descs: Array.from(document.querySelectorAll('.r-desc')).map(i => i.value),
+            shares: Array.from(document.querySelectorAll('.report-share')).map(i => i.value),
+            dsDates: Array.from(document.querySelectorAll('.ds-date')).map(i => i.value),
+            dsNets: Array.from(document.querySelectorAll('.ds-net')).map(i => i.value),
+            scDates: Array.from(document.querySelectorAll('.sc-date')).map(i => i.value),
+            scNets: Array.from(document.querySelectorAll('.sc-net')).map(i => i.value)
+        };
+        localStorage.setItem('dolores_active_draft', JSON.stringify(draft));
+    }
+
+    function loadActiveDraft() {
+        const saved = localStorage.getItem('dolores_active_draft');
+        if (!saved) return;
+        try {
+            const draft = JSON.parse(saved);
+            document.getElementById('eventDate').value = draft.eventDate || '';
+            document.getElementById('eventName').value = draft.eventName || '';
+            document.getElementById('goodFights').value = draft.goodFights || '';
+            document.getElementById('plasada').value = draft.plasada || '';
+            document.getElementById('prize').value = draft.prize || '';
+            document.getElementById('checkedBy').value = draft.checkedBy || '';
+
+            const expenseInputs = document.querySelectorAll('.expense-item');
+            if (draft.expenses) {
+                expenseInputs.forEach((inp, idx) => { inp.value = draft.expenses[idx] || ''; });
+            }
+
+            document.getElementById('reportTitle').value = draft.reportTitle || '';
+            document.getElementById('weeklyReviewNotes').value = draft.weeklyReviewNotes || '';
+
+            const dateInputs = document.querySelectorAll('.r-date');
+            const descInputs = document.querySelectorAll('.r-desc');
+            const shareInputs = document.querySelectorAll('.report-share');
+
+            for (let i = 0; i < 7; i++) {
+                if (draft.dates) dateInputs[i].value = draft.dates[i] || '';
+                if (draft.descs) descInputs[i].value = draft.descs[i] || '';
+                if (draft.shares) shareInputs[i].value = draft.shares[i] || '';
+            }
+
+            const dsDates = document.querySelectorAll('.ds-date');
+            const dsNets = document.querySelectorAll('.ds-net');
+            const scDates = document.querySelectorAll('.sc-date');
+            const scNets = document.querySelectorAll('.sc-net');
+
+            if (draft.dsDates) dsDates.forEach((inp, idx) => inp.value = draft.dsDates[idx] || '');
+            if (draft.dsNets) dsNets.forEach((inp, idx) => inp.value = draft.dsNets[idx] || '');
+            if (draft.scDates) scDates.forEach((inp, idx) => inp.value = draft.scDates[idx] || '');
+            if (draft.scNets) scNets.forEach((inp, idx) => inp.value = draft.scNets[idx] || '');
+
+        } catch (e) {
+            console.error("Error loading active draft", e);
+        }
+    }
+
+    function sendToReport() {
+        const eventDate = document.getElementById('eventDate').value;
+        const eventName = document.getElementById('eventName').value;
+
+        const plasada = Number(document.getElementById('plasada').value) || 0;
+        const prize = Number(document.getElementById('prize').value) || 0;
+        let totalExpenses = 0;
+        document.querySelectorAll('.expense-item').forEach(input => {
+            totalExpenses += Number(input.value) || 0;
+        });
+        const netTotal = plasada - prize - totalExpenses;
+        const progShare = Math.round(netTotal * 0.05);
+
+        let successfullyAdded = false;
+
+        for (let i = 1; i <= 7; i++) {
+            const row = document.getElementById(`day-row-${i}`);
+            const dateInput = row.querySelector('.r-date');
+            const descInput = row.querySelector('.r-desc');
+            const shareInput = row.querySelector('.report-share');
+
+            if (descInput.value.trim() === '' && (shareInput.value === '' || Number(shareInput.value) === 0)) {
+                dateInput.value = eventDate;
+                descInput.value = eventName;
+                shareInput.value = progShare;
+                
+                successfullyAdded = true;
+                alert(`Successfully added to Day ${i} of the Weekly Report!`);
+                break;
+            }
+        }
+
+        if (!successfullyAdded) {
+            alert("The Weekly Report (7 days) is full! Please reset a day or save the current batch to history first.");
+            return;
+        }
+
+        calculateReportTotal();
+        saveActiveDraft();
+    }
+
+    function resetForm() {
+        document.getElementById('eventDate').value = '';
+        document.getElementById('eventName').value = '';
+        document.getElementById('goodFights').value = '';
+        document.getElementById('checkedBy').value = '';
+        
+        document.querySelectorAll('.sheet-container input[type="number"]').forEach(i => i.value = '');
+        calculate();
+        saveActiveDraft();
+    }
+
+    function resetSingleDay(dayIndex) {
+        const row = document.getElementById(`day-row-${dayIndex}`);
+        if (row) {
+            row.querySelector('.r-date').value = '';
+            row.querySelector('.r-desc').value = '';
+            row.querySelector('.report-share').value = '';
+            calculateReportTotal();
+            saveActiveDraft();
+        }
+    }
+
+    function resetSingleDayWithPasscode(dayIndex) {
+        if (verifyPasscode()) {
+            resetSingleDay(dayIndex);
+        }
+    }
+
+    function resetAllDaysWithPasscode() {
+        if (verifyPasscode()) {
+            for (let i = 1; i <= 7; i++) {
+                resetSingleDay(i);
+            }
+        }
+    }
+
+    function updateSnapshotTexts(containerId) {
+        const container = document.getElementById(containerId);
+        if (!container) return;
+
+        const inputs = container.querySelectorAll('input, textarea');
+        inputs.forEach(input => {
+            let snap = input.nextElementSibling;
+            if (snap && snap.classList.contains('snapshot-text')) {
+                snap.textContent = input.value || (input.classList.contains('num-input') ? '0' : '');
+            }
+            if (input.id) {
+                const snapById = document.getElementById('snap-' + input.id);
+                if (snapById) {
+                    snapById.textContent = input.value || (input.classList.contains('num-input') ? '0' : '');
+                }
+            }
+        });
+    }
+
+    function saveAsPhoto(containerId, filename) {
+        const container = document.getElementById(containerId);
+        if (!container) return;
+
+        updateSnapshotTexts(containerId);
+        container.classList.add('force-landscape');
+
+        html2canvas(container, {
+            scale: 2,
+            useCORS: true,
+            logging: false
+        }).then(canvas => {
+            const link = document.createElement('a');
+            link.download = filename;
+            link.href = canvas.toDataURL('image/png');
+            link.click();
+            container.classList.remove('force-landscape');
+        }).catch(err => {
+            console.error('Error generating photo:', err);
+            container.classList.remove('force-landscape');
+            alert('Failed to generate image. Please try again.');
+        });
+    }
+
+    window.addEventListener('DOMContentLoaded', () => {
+        loadActiveDraft();
+        calculate();
+        calculateDrawShares();
+        calculateShadowShares();
+        calculateReportTotal();
+    });
+</script>
+</body>
+</html>
