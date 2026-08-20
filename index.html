@@ -122,9 +122,9 @@
             background: #ffffff;
             border: 2px solid var(--border-color);
             padding: 15px;
-            box-shadow: 0 4px 15px rgba(0,0,0,0.15);
             box-sizing: border-box;
             border-radius: 6px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.15);
         }
 
         /* Banner */
@@ -145,7 +145,7 @@
         .meta-grid {
             display: grid;
             grid-template-columns: 110px 1fr;
-            gap: 10px 10px;
+            gap: 10px;
             margin-bottom: 20px;
             font-weight: bold;
             align-items: center;
@@ -169,75 +169,27 @@
             gap: 20px;
         }
 
-        /* Responsive Breakpoint for Mobile Display */
         @media (max-width: 768px) {
-            body {
-                padding: 8px;
-            }
-
+            body { padding: 8px; }
             .sheet-container:not(.force-landscape), 
             .report-container:not(.force-landscape),
-            .storage-container:not(.force-landscape) {
-                padding: 10px;
-            }
-
-            .sheet-container:not(.force-landscape) .banner,
-            .report-container:not(.force-landscape) .banner {
-                font-size: 20px;
-            }
-
-            .sheet-container:not(.force-landscape) .main-layout {
-                grid-template-columns: 1fr;
-            }
-
-            .sheet-container:not(.force-landscape) .meta-grid {
-                grid-template-columns: 1fr;
-                gap: 5px;
-            }
-
-            .sheet-container:not(.force-landscape) .meta-grid input {
-                max-width: 100%;
-                margin-bottom: 8px;
-            }
-
-            .sheet-container:not(.force-landscape) .signature-area {
-                margin: 30px auto 10px auto !important;
-            }
+            .storage-container:not(.force-landscape) { padding: 10px; }
+            .sheet-container:not(.force-landscape) .main-layout { grid-template-columns: 1fr; }
+            .sheet-container:not(.force-landscape) .meta-grid { grid-template-columns: 1fr; gap: 5px; }
+            .sheet-container:not(.force-landscape) .meta-grid input { max-width: 100%; margin-bottom: 8px; }
         }
 
-        /* Forces Landscape View & Snapshot Viewability during image capture */
         .force-landscape {
             width: 950px !important;
             max-width: 950px !important;
             padding: 25px !important;
             background: #ffffff !important;
         }
-
-        .force-landscape .main-layout {
-            grid-template-columns: 1fr 1fr !important;
-            gap: 25px !important;
-        }
-
-        .force-landscape .meta-grid {
-            grid-template-columns: 120px 1fr !important;
-            gap: 8px 15px !important;
-        }
-
-        .force-landscape .meta-grid input {
-            width: 250px !important;
-        }
-
-        .force-landscape .banner {
-            font-size: 28px !important;
-        }
-
-        .force-landscape input, 
-        .force-landscape textarea, 
-        .force-landscape select,
-        .force-landscape .actions,
-        .force-landscape .actions-ignore {
-            display: none !important;
-        }
+        .force-landscape .main-layout { grid-template-columns: 1fr 1fr !important; gap: 25px !important; }
+        .force-landscape .meta-grid { grid-template-columns: 120px 1fr !important; gap: 8px 15px !important; }
+        .force-landscape .meta-grid input { width: 250px !important; }
+        .force-landscape .banner { font-size: 28px !important; }
+        .force-landscape input, .force-landscape textarea, .force-landscape select, .force-landscape .actions, .force-landscape .actions-ignore { display: none !important; }
 
         .snapshot-text {
             display: none;
@@ -247,23 +199,9 @@
             padding: 4px 2px;
             word-break: break-word;
         }
-
-        .force-landscape .snapshot-text {
-            display: block !important;
-        }
-
-        .force-landscape textarea + .snapshot-text {
-            white-space: pre-wrap;
-        }
-
-        .force-landscape input.num-input + .snapshot-text,
-        .force-landscape td input.num-input + .snapshot-text {
-            text-align: right;
-        }
-
-        .force-landscape .meta-grid input + .snapshot-text {
-            max-width: 300px;
-        }
+        .force-landscape .snapshot-text { display: block !important; }
+        .force-landscape textarea + .snapshot-text { white-space: pre-wrap; }
+        .force-landscape input.num-input + .snapshot-text, .force-landscape td input.num-input + .snapshot-text { text-align: right; }
 
         .section-title {
             background-color: var(--primary-red);
@@ -277,189 +215,39 @@
             border-radius: 3px;
         }
 
-        .table-responsive {
-            width: 100%;
-            overflow-x: auto;
-            -webkit-overflow-scrolling: touch;
-        }
+        .table-responsive { width: 100%; overflow-x: auto; -webkit-overflow-scrolling: touch; }
+        table { width: 100%; border-collapse: collapse; min-width: 300px; }
+        table td, table th { padding: 8px 6px; border: 1px solid #333; font-weight: bold; font-size: 14px; }
+        table th { background-color: #f0f0f0; text-align: center; }
 
-        table {
-            width: 100%;
-            border-collapse: collapse;
-            min-width: 300px;
+        input[type="text"], input[type="date"], select, textarea {
+            width: 100%; border: none; outline: none; font-size: 15px; font-weight: bold; background: transparent; padding: 4px 2px;
         }
+        input.num-input { text-align: right; }
+        input.r-date[readonly], input.r-desc[readonly], input.report-share[readonly] { cursor: not-allowed; color: #333; background-color: #f9f9f9; }
 
-        table td, table th {
-            padding: 8px 6px;
-            border: 1px solid #333;
-            font-weight: bold;
-            font-size: 14px;
-        }
+        .label-cell { text-transform: uppercase; }
+        .plasada-bg { background-color: var(--plasada-green); color: white; }
+        .prize-bg { background-color: var(--primary-red); color: white; }
+        .summary-box { margin-top: 20px; }
+        .summary-row { display: flex; justify-content: space-between; border: 1px solid #333; padding: 10px; font-weight: bold; font-size: 16px; margin-bottom: 10px; background: #fdfdfd; }
+        .negative-val { color: #d9534f !important; }
+        .positive-val { color: #000000 !important; }
 
-        table th {
-            background-color: #f0f0f0;
-            text-align: center;
-        }
+        .signature-area { margin-top: 35px; width: 220px; text-align: center; }
+        .signature-line { border-top: 2px solid #000; padding-top: 5px; font-weight: bold; }
+        .signature-title { font-style: italic; font-weight: bold; font-size: 13px; }
 
-        input[type="number"], input[type="text"], input[type="date"], select, textarea {
-            width: 100%;
-            border: none;
-            outline: none;
-            font-size: 15px;
-            font-weight: bold;
-            background: transparent;
-            padding: 4px 2px;
-        }
+        .report-header { font-size: 18px; font-weight: bold; margin-bottom: 5px; color: var(--dark-red); text-transform: uppercase; border-bottom: 2px solid var(--dark-red); padding-bottom: 5px; }
+        .report-subhead { font-size: 11px; color: #666; margin-bottom: 15px; font-style: italic; }
 
-        input[type=number]::-webkit-inner-spin-button, 
-        input[type=number]::-webkit-outer-spin-button { 
-            -webkit-appearance: none; 
-            margin: 0; 
-        }
+        .history-bar { background: #e9ecef; border: 1px solid #ccc; padding: 12px; margin-bottom: 15px; display: flex; gap: 10px; align-items: stretch; flex-direction: column; border-radius: 4px; }
+        .history-bar label { font-weight: bold; font-size: 14px; }
+        .history-bar select, .history-bar input { border: 1px solid #888; background: #fff; padding: 8px; font-weight: normal; width: 100%; border-radius: 4px; }
 
-        input[type=number] {
-            -moz-appearance: textfield;
-        }
-
-        input.num-input {
-            text-align: right;
-        }
-
-        input.r-date[readonly], input.r-desc[readonly], input.report-share[readonly] {
-            cursor: not-allowed;
-            color: #333;
-            background-color: #f9f9f9;
-        }
-
-        .label-cell {
-            text-transform: uppercase;
-        }
-
-        .plasada-bg {
-            background-color: var(--plasada-green);
-            color: white;
-        }
-
-        .prize-bg {
-            background-color: var(--primary-red);
-            color: white;
-        }
-
-        .summary-box {
-            margin-top: 20px;
-        }
-
-        .summary-row {
-            display: flex;
-            justify-content: space-between;
-            border: 1px solid #333;
-            padding: 10px;
-            font-weight: bold;
-            font-size: 16px;
-            margin-bottom: 10px;
-            background: #fdfdfd;
-        }
-
-        .negative-val {
-            color: #d9534f !important;
-        }
-
-        .positive-val {
-            color: #000000 !important;
-        }
-
-        .signature-area {
-            margin-top: 35px;
-            width: 220px;
-            text-align: center;
-        }
-
-        .signature-line {
-            border-top: 2px solid #000;
-            padding-top: 5px;
-            font-weight: bold;
-        }
-
-        .signature-title {
-            font-style: italic;
-            font-weight: bold;
-            font-size: 13px;
-        }
-
-        .report-header {
-            font-size: 18px;
-            font-weight: bold;
-            margin-bottom: 5px;
-            color: var(--dark-red);
-            text-transform: uppercase;
-            border-bottom: 2px solid var(--dark-red);
-            padding-bottom: 5px;
-        }
-
-        .report-subhead {
-            font-size: 11px;
-            color: #666;
-            margin-bottom: 15px;
-            font-style: italic;
-        }
-
-        .history-bar {
-            background: #e9ecef;
-            border: 1px solid #ccc;
-            padding: 12px;
-            margin-bottom: 15px;
-            display: flex;
-            gap: 10px;
-            align-items: stretch;
-            flex-direction: column;
-            border-radius: 4px;
-        }
-
-        .history-bar label {
-            font-weight: bold;
-            font-size: 14px;
-        }
-
-        .history-bar select, .history-bar input {
-            border: 1px solid #888;
-            background: #fff;
-            padding: 8px;
-            font-weight: normal;
-            width: 100%;
-            border-radius: 4px;
-        }
-
-        .actions {
-            margin-top: 20px;
-            display: flex;
-            gap: 10px;
-            justify-content: flex-end;
-            flex-wrap: wrap;
-        }
-
-        .btn {
-            padding: 12px 16px;
-            font-size: 14px;
-            font-weight: bold;
-            border: none;
-            cursor: pointer;
-            border-radius: 5px;
-            color: white;
-            flex: 1 1 auto;
-            text-align: center;
-            min-height: 44px;
-            display: inline-flex;
-            align-items: center;
-            justify-content: center;
-        }
-
-        .btn-sm {
-            padding: 6px 10px;
-            font-size: 12px;
-            border-radius: 3px;
-            min-height: 36px;
-            width: 100%;
-        }
+        .actions { margin-top: 20px; display: flex; gap: 10px; justify-content: flex-end; flex-wrap: wrap; }
+        .btn { padding: 12px 16px; font-size: 14px; font-weight: bold; border: none; cursor: pointer; border-radius: 5px; color: white; flex: 1 1 auto; text-align: center; min-height: 44px; display: inline-flex; align-items: center; justify-content: center; }
+        .btn-sm { padding: 6px 10px; font-size: 12px; border-radius: 3px; min-height: 36px; width: 100%; }
 
         .btn-photo { background-color: #28a745; }
         .btn-reset { background-color: #6c757d; }
@@ -468,15 +256,9 @@
         .btn-delete { background-color: #dc3545; }
         .btn-warning { background-color: #ff9800; }
         .btn-storage { background-color: #6610f2; }
+        .btn-cloud { background-color: #e83e8c; }
 
-        .shares-header {
-            background-color: var(--primary-red);
-            color: white;
-            font-weight: 900;
-            text-align: center;
-            text-transform: uppercase;
-            letter-spacing: 0.5px;
-        }
+        .shares-header { background-color: var(--primary-red); color: white; font-weight: 900; text-align: center; text-transform: uppercase; letter-spacing: 0.5px; }
     </style>
 </head>
 <body>
@@ -500,14 +282,24 @@
     <button onclick="logoutPortal()">Log Out</button>
 </div>
 
-<!-- DATA STORAGE & BACKUP MANAGEMENT PANEL -->
+<!-- ONLINE & LOCAL STORAGE MANAGEMENT PANEL -->
 <div class="storage-container actions-ignore admin-only">
-    <div class="report-header" style="color: #6610f2; border-color: #6610f2;">Local Storage & Backup Manager</div>
-    <div class="report-subhead">Your data is stored automatically in your browser. You can also export or import backup files.</div>
+    <div class="report-header" style="color: #6610f2; border-color: #6610f2;">Online & Local Storage Manager</div>
+    <div class="report-subhead">Manage local backups or sync data to an online JSON endpoint (e.g., npoint.io or JSONBin).</div>
+    
+    <div style="margin-bottom: 12px;">
+        <label style="font-size: 13px; font-weight: bold; display: block; margin-bottom: 4px;">Cloud Sync Endpoint URL:</label>
+        <div style="display: flex; gap: 8px;">
+            <input type="text" id="cloudSyncUrl" placeholder="https://api.npoint.io/your-bin-id" style="border: 1px solid #ccc; padding: 8px; border-radius: 4px; background: #fafafa; flex: 1;" oninput="saveActiveDraft()">
+            <button class="btn btn-cloud" style="flex: 0 0 auto; padding: 8px 14px; min-height: auto;" onclick="pushToCloudStorage()">Push to Cloud</button>
+            <button class="btn btn-storage" style="flex: 0 0 auto; padding: 8px 14px; min-height: auto;" onclick="pullFromCloudStorage()">Pull from Cloud</button>
+        </div>
+    </div>
+
     <div class="actions" style="margin-top: 10px; justify-content: flex-start;">
-        <button class="btn btn-storage" onclick="exportDataFile()">Export Backup File (.json)</button>
+        <button class="btn btn-storage" onclick="exportDataFile()">Export File (.json)</button>
         <label class="btn btn-storage" style="cursor: pointer; margin: 0;">
-            Import Backup File <input type="file" id="importFile" accept=".json" style="display: none;" onchange="importDataFile(event)">
+            Import File <input type="file" id="importFile" accept=".json" style="display: none;" onchange="importDataFile(event)">
         </label>
         <button class="btn btn-delete" onclick="clearAllStorageWithPasscode()">Clear All Data</button>
     </div>
@@ -542,14 +334,14 @@
                     <tr>
                         <td class="label-cell plasada-bg">PLASADA</td>
                         <td>
-                            <input type="number" id="plasada" class="num-input" placeholder="0" oninput="calculate(); saveActiveDraft();">
+                            <input type="text" inputmode="decimal" id="plasada" class="num-input" placeholder="0" oninput="calculate(); saveActiveDraft();">
                             <span class="snapshot-text" id="snap-plasada">0</span>
                         </td>
                     </tr>
                     <tr>
                         <td class="label-cell prize-bg">PRIZE</td>
                         <td>
-                            <input type="number" id="prize" class="num-input" placeholder="0" oninput="calculate(); saveActiveDraft();">
+                            <input type="text" inputmode="decimal" id="prize" class="num-input" placeholder="0" oninput="calculate(); saveActiveDraft();">
                             <span class="snapshot-text" id="snap-prize">0</span>
                         </td>
                     </tr>
@@ -599,39 +391,39 @@
                 <table>
                     <tr>
                         <td class="label-cell">TELLER</td>
-                        <td><input type="number" class="expense-item num-input" placeholder="0" oninput="calculate(); saveActiveDraft();"><span class="snapshot-text num-input exp-snap">0</span></td>
+                        <td><input type="text" inputmode="decimal" class="expense-item num-input" placeholder="0" oninput="calculate(); saveActiveDraft();"><span class="snapshot-text num-input exp-snap">0</span></td>
                     </tr>
                     <tr>
                         <td class="label-cell">ADMIN</td>
-                        <td><input type="number" class="expense-item num-input" placeholder="0" oninput="calculate(); saveActiveDraft();"><span class="snapshot-text num-input exp-snap">0</span></td>
+                        <td><input type="text" inputmode="decimal" class="expense-item num-input" placeholder="0" oninput="calculate(); saveActiveDraft();"><span class="snapshot-text num-input exp-snap">0</span></td>
                     </tr>
                     <tr>
                         <td class="label-cell">I.T.</td>
-                        <td><input type="number" class="expense-item num-input" placeholder="0" oninput="calculate(); saveActiveDraft();"><span class="snapshot-text num-input exp-snap">0</span></td>
+                        <td><input type="text" inputmode="decimal" class="expense-item num-input" placeholder="0" oninput="calculate(); saveActiveDraft();"><span class="snapshot-text num-input exp-snap">0</span></td>
                     </tr>
                     <tr>
                         <td class="label-cell">I.T. MEAL</td>
-                        <td><input type="number" class="expense-item num-input" placeholder="0" oninput="calculate(); saveActiveDraft();"><span class="snapshot-text num-input exp-snap">0</span></td>
+                        <td><input type="text" inputmode="decimal" class="expense-item num-input" placeholder="0" oninput="calculate(); saveActiveDraft();"><span class="snapshot-text num-input exp-snap">0</span></td>
                     </tr>
                     <tr>
                         <td class="label-cell">RUNNER</td>
-                        <td><input type="number" class="expense-item num-input" placeholder="0" oninput="calculate(); saveActiveDraft();"><span class="snapshot-text num-input exp-snap">0</span></td>
+                        <td><input type="text" inputmode="decimal" class="expense-item num-input" placeholder="0" oninput="calculate(); saveActiveDraft();"><span class="snapshot-text num-input exp-snap">0</span></td>
                     </tr>
                     <tr>
                         <td class="label-cell">SECURITY</td>
-                        <td><input type="number" class="expense-item num-input" placeholder="0" oninput="calculate(); saveActiveDraft();"><span class="snapshot-text num-input exp-snap">0</span></td>
+                        <td><input type="text" inputmode="decimal" class="expense-item num-input" placeholder="0" oninput="calculate(); saveActiveDraft();"><span class="snapshot-text num-input exp-snap">0</span></td>
                     </tr>
                     <tr>
                         <td class="label-cell">ELECTRIC</td>
-                        <td><input type="number" class="expense-item num-input" placeholder="0" oninput="calculate(); saveActiveDraft();"><span class="snapshot-text num-input exp-snap">0</span></td>
+                        <td><input type="text" inputmode="decimal" class="expense-item num-input" placeholder="0" oninput="calculate(); saveActiveDraft();"><span class="snapshot-text num-input exp-snap">0</span></td>
                     </tr>
                     <tr>
                         <td class="label-cell">THERMAL</td>
-                        <td><input type="number" class="expense-item num-input" placeholder="0" oninput="calculate(); saveActiveDraft();"><span class="snapshot-text num-input exp-snap">0</span></td>
+                        <td><input type="text" inputmode="decimal" class="expense-item num-input" placeholder="0" oninput="calculate(); saveActiveDraft();"><span class="snapshot-text num-input exp-snap">0</span></td>
                     </tr>
                     <tr>
                         <td class="label-cell">S.P.</td>
-                        <td><input type="number" class="expense-item num-input" placeholder="0" oninput="calculate(); saveActiveDraft();"><span class="snapshot-text num-input exp-snap">0</span></td>
+                        <td><input type="text" inputmode="decimal" class="expense-item num-input" placeholder="0" oninput="calculate(); saveActiveDraft();"><span class="snapshot-text num-input exp-snap">0</span></td>
                     </tr>
                     <tr>
                         <td class="label-cell" style="text-align: right; font-weight: 900;">TOTAL</td>
@@ -689,7 +481,7 @@
                                     <span class="snapshot-text r-desc-snap"></span>
                                 </td>
                                 <td>
-                                    <input type="number" class="report-share num-input" placeholder="0" readonly>
+                                    <input type="text" inputmode="decimal" class="report-share num-input" placeholder="0" readonly>
                                     <span class="snapshot-text num-input r-share-snap">0</span>
                                 </td>
                                 <td style="text-align: center;" class="actions-ignore admin-only">
@@ -722,7 +514,7 @@
     </div>
 </div>
 
-<!-- DRAW SHARE REPORT (MOVED TO BOTTOM) - 5 ROWS -->
+<!-- DRAW SHARE REPORT - 5 ROWS -->
 <div class="report-container" id="drawShareSheet">
     <div class="report-header">Draw Share Report</div>
     <div class="report-subhead">* Input dates and Net Gains to automatically sort and calculate the 50% split.</div>
@@ -749,7 +541,7 @@
                                     <span class="snapshot-text ds-date-snap"></span>
                                 </td>
                                 <td>
-                                    <input type="number" class="ds-net num-input" placeholder="0" oninput="calculateDrawShares(); saveActiveDraft();">
+                                    <input type="text" inputmode="decimal" class="ds-net num-input" placeholder="0" oninput="calculateDrawShares(); saveActiveDraft();">
                                     <span class="snapshot-text num-input ds-net-snap">0</span>
                                 </td>
                                 <td class="ds-fifty" style="text-align: right;">-</td>
@@ -772,7 +564,7 @@
     </div>
 </div>
 
-<!-- SHADOW COLLECTIVE REPORT (MOVED TO BOTTOM) - 10 ROWS -->
+<!-- SHADOW COLLECTIVE REPORT - 10 ROWS -->
 <div class="report-container" id="shadowSheet">
     <div class="report-header">Shadow Collective Report</div>
     <div class="report-subhead">* Input dates and Net Gains to automatically sort and calculate the 70% and 30% splits.</div>
@@ -800,7 +592,7 @@
                                     <span class="snapshot-text sc-date-snap"></span>
                                 </td>
                                 <td>
-                                    <input type="number" class="sc-net num-input" placeholder="0" oninput="calculateShadowShares(); saveActiveDraft();">
+                                    <input type="text" inputmode="decimal" class="sc-net num-input" placeholder="0" oninput="calculateShadowShares(); saveActiveDraft();">
                                     <span class="snapshot-text num-input sc-net-snap">0</span>
                                 </td>
                                 <td class="sc-seventy" style="text-align: right;">-</td>
@@ -931,11 +723,11 @@
         const expenseInputs = document.querySelectorAll('.expense-item');
         let totalExpenses = 0;
         expenseInputs.forEach(input => {
-            totalExpenses += Number(input.value) || 0;
+            totalExpenses += Number(input.value.replace(/,/g, '')) || 0;
         });
 
-        const plasada = Number(document.getElementById('plasada').value) || 0;
-        const prize = Number(document.getElementById('prize').value) || 0;
+        const plasada = Number(document.getElementById('plasada').value.replace(/,/g, '')) || 0;
+        const prize = Number(document.getElementById('prize').value.replace(/,/g, '')) || 0;
         const netTotal = plasada - prize - totalExpenses;
 
         const progShare = netTotal * 0.05;
@@ -967,7 +759,6 @@
         const tbody = document.getElementById('drawShareBody');
         const rows = Array.from(tbody.querySelectorAll('tr')).slice(0, 5);
 
-        // Auto-sort rows by date (oldest to newest)
         rows.sort((a, b) => {
             const dateA = a.querySelector('.ds-date').value;
             const dateB = b.querySelector('.ds-date').value;
@@ -985,7 +776,7 @@
 
         rows.forEach((row, i) => {
             const inputNet = row.querySelector('.ds-net');
-            const val = inputNet.value !== "" ? Number(inputNet.value) : null;
+            const val = inputNet.value !== "" ? Number(inputNet.value.replace(/,/g, '')) : null;
             if (val !== null && !isNaN(val)) {
                 const fifty = val * 0.50;
                 fiftyCells[i].textContent = formatNumber(fifty);
@@ -1012,7 +803,6 @@
         const tbody = document.getElementById('shadowBody');
         const rows = Array.from(tbody.querySelectorAll('tr')).slice(0, 10);
 
-        // Auto-sort rows by date (oldest to newest)
         rows.sort((a, b) => {
             const dateA = a.querySelector('.sc-date').value;
             const dateB = b.querySelector('.sc-date').value;
@@ -1032,7 +822,7 @@
 
         rows.forEach((row, i) => {
             const inputNet = row.querySelector('.sc-net');
-            const val = inputNet.value !== "" ? Number(inputNet.value) : null;
+            const val = inputNet.value !== "" ? Number(inputNet.value.replace(/,/g, '')) : null;
             if (val !== null && !isNaN(val)) {
                 const seventy = val * 0.70;
                 const thirty = val * 0.30;
@@ -1067,7 +857,6 @@
             rows.push(document.getElementById(`day-row-${i}`));
         }
 
-        // Auto-sort rows by date (oldest to newest)
         rows.sort((a, b) => {
             const dateA = a.querySelector('.r-date').value;
             const dateB = b.querySelector('.r-date').value;
@@ -1086,7 +875,7 @@
         let totalPayout = 0;
 
         reportInputs.forEach(input => {
-            const val = Number(input.value) || 0;
+            const val = Number(input.value.replace(/,/g, '')) || 0;
             if (val < 0) {
                 input.classList.add('negative-val');
                 input.classList.remove('positive-val');
@@ -1106,6 +895,7 @@
     function saveActiveDraft() {
         if (currentRole === 'viewer') return;
         const draft = {
+            cloudSyncUrl: document.getElementById('cloudSyncUrl').value,
             eventDate: document.getElementById('eventDate').value,
             eventName: document.getElementById('eventName').value,
             goodFights: document.getElementById('goodFights').value,
@@ -1131,6 +921,7 @@
         if (!saved) return;
         try {
             const draft = JSON.parse(saved);
+            if (draft.cloudSyncUrl) document.getElementById('cloudSyncUrl').value = draft.cloudSyncUrl;
             document.getElementById('eventDate').value = draft.eventDate || '';
             document.getElementById('eventName').value = draft.eventName || '';
             document.getElementById('goodFights').value = draft.goodFights || '';
@@ -1171,15 +962,73 @@
         }
     }
 
+    async function pushToCloudStorage() {
+        const url = document.getElementById('cloudSyncUrl').value.trim();
+        if (!url) {
+            alert("Please enter a valid Cloud Sync Endpoint URL first!");
+            return;
+        }
+        const saved = localStorage.getItem('dolores_active_draft');
+        if (!saved) {
+            alert("No data available to push!");
+            return;
+        }
+
+        try {
+            const response = await fetch(url, {
+                method: 'PUT',
+                headers: { 'Content-Type': 'application/json' },
+                body: saved
+            });
+            if (response.ok) {
+                alert("Successfully pushed data to online cloud storage!");
+            } else {
+                alert("Failed to sync to cloud. Please check your URL permissions/endpoint type.");
+            }
+        } catch (err) {
+            console.error(err);
+            alert("Network error while pushing to cloud. (Make sure CORS is allowed or use a valid REST endpoint like npoint.io)");
+        }
+    }
+
+    async function pullFromCloudStorage() {
+        const url = document.getElementById('cloudSyncUrl').value.trim();
+        if (!url) {
+            alert("Please enter a valid Cloud Sync Endpoint URL first!");
+            return;
+        }
+
+        if (!confirm("Pulling data from the cloud will overwrite your current screen data. Continue?")) return;
+
+        try {
+            const response = await fetch(url);
+            if (response.ok) {
+                const data = await response.json();
+                localStorage.setItem('dolores_active_draft', JSON.stringify(data));
+                loadActiveDraft();
+                calculate();
+                calculateDrawShares();
+                calculateShadowShares();
+                calculateReportTotal();
+                alert("Successfully pulled and updated data from cloud storage!");
+            } else {
+                alert("Failed to retrieve data from the given cloud URL.");
+            }
+        } catch (err) {
+            console.error(err);
+            alert("Network error while pulling from cloud.");
+        }
+    }
+
     function sendToReport() {
         const eventDate = document.getElementById('eventDate').value;
         const eventName = document.getElementById('eventName').value;
 
-        const plasada = Number(document.getElementById('plasada').value) || 0;
-        const prize = Number(document.getElementById('prize').value) || 0;
+        const plasada = Number(document.getElementById('plasada').value.replace(/,/g, '')) || 0;
+        const prize = Number(document.getElementById('prize').value.replace(/,/g, '')) || 0;
         let totalExpenses = 0;
         document.querySelectorAll('.expense-item').forEach(input => {
-            totalExpenses += Number(input.value) || 0;
+            totalExpenses += Number(input.value.replace(/,/g, '')) || 0;
         });
         const netTotal = plasada - prize - totalExpenses;
         const progShare = Math.round(netTotal * 0.05);
@@ -1218,7 +1067,7 @@
         document.getElementById('goodFights').value = '';
         document.getElementById('checkedBy').value = '';
         
-        document.querySelectorAll('.sheet-container input[type="number"]').forEach(i => i.value = '');
+        document.querySelectorAll('.sheet-container input.num-input').forEach(i => i.value = '');
         calculate();
         saveActiveDraft();
     }
