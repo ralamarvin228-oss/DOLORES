@@ -919,57 +919,11 @@
         };
         localStorage.setItem('dolores_active_draft', JSON.stringify(draft));
 
-        // Automatically trigger background push to cloud (debounced by 1.5 seconds)
         if (currentRole !== 'viewer') {
             clearTimeout(autoSyncTimer);
             autoSyncTimer = setTimeout(() => {
                 pushToCloudStorageSilent();
             }, 1500);
-        }
-    }
-
-    function loadActiveDraft() {
-        const saved = localStorage.getItem('dolores_active_draft');
-        if (!saved) return;
-        try {
-            const data = JSON.parse(saved);
-            if (data.cloudSyncUrl) document.getElementById('cloudSyncUrl').value = data.cloudSyncUrl;
-            if (data.eventDate) document.getElementById('eventDate').value = data.eventDate;
-            if (data.eventName) document.getElementById('eventName').value = data.eventName;
-            if (data.goodFights) document.getElementById('goodFights').value = data.goodFights;
-            if (data.plasada) document.getElementById('plasada').value = data.plasada;
-            if (data.prize) document.getElementById('prize').value = data.prize;
-            if (data.checkedBy) document.getElementById('checkedBy').value = data.checkedBy;
-
-            const expenseInputs = document.querySelectorAll('.expense-item');
-            if (data.expenses) {
-                expenseInputs.forEach((inp, idx) => { inp.value = data.expenses[idx] || ''; });
-            }
-
-            if (data.reportTitle) document.getElementById('reportTitle').value = data.reportTitle;
-            if (data.weeklyReviewNotes) document.getElementById('weeklyReviewNotes').value = data.weeklyReviewNotes;
-
-            const dateInputs = document.querySelectorAll('.r-date');
-            const descInputs = document.querySelectorAll('.r-desc');
-            const shareInputs = document.querySelectorAll('.report-share');
-
-            for (let i = 0; i < 7; i++) {
-                if (data.dates && data.dates[i]) dateInputs[i].value = data.dates[i];
-                if (data.descs && data.descs[i]) descInputs[i].value = data.descs[i];
-                if (data.shares && data.shares[i]) shareInputs[i].value = data.shares[i];
-            }
-
-            const dsDates = document.querySelectorAll('.ds-date');
-            const dsNets = document.querySelectorAll('.ds-net');
-            const scDates = document.querySelectorAll('.sc-date');
-            const scNets = document.querySelectorAll('.sc-net');
-
-            if (data.dsDates) dsDates.forEach((inp, idx) => inp.value = data.dsDates[idx] || '');
-            if (data.dsNets) dsNets.forEach((inp, idx) => inp.value = data.dsNets[idx] || '');
-            if (data.scDates) scDates.forEach((inp, idx) => inp.value = data.scDates[idx] || '');
-            if (data.scNets) scNets.forEach((inp, idx) => inp.value = data.scNets[idx] || '');
-        } catch (e) {
-            console.error("Error loading local draft:", e);
         }
     }
 
@@ -996,26 +950,42 @@
             alert("Please enter a valid Cloud Sync Endpoint URL first!");
             return;
         }
-        const saved = localStorage.getItem('dolores_active_draft');
-        if (!saved) {
-            alert("No data available to push!");
-            return;
-        }
+        
+        // Create an explicit blank payload template to push a fresh start to cloud
+        const freshTemplate = {
+            cloudSyncUrl: url,
+            eventDate: "", eventName: "", goodFights: "", plasada: "", prize: "", checkedBy: "",
+            expenses: ["", "", "", "", "", "", "", "", ""],
+            reportTitle: "", weeklyReviewNotes: "",
+            dates: ["", "", "", "", "", "", ""],
+            descs: ["", "", "", "", "", "", ""],
+            shares: ["", "", "", "", "", "", ""],
+            dsDates: ["", "", "", "", ""], dsNets: ["", "", "", "", ""],
+            scDates: ["", "", "", "", "", "", "", "", "", ""], scNets: ["", "", "", "", "", "", "", "", "", ""]
+        };
+
+        const payloadToPush = JSON.stringify(freshTemplate);
 
         try {
             const response = await fetch(url, {
                 method: 'PUT',
                 headers: { 'Content-Type': 'application/json' },
-                body: saved
+                body: payloadToPush
             });
             if (response.ok) {
-                alert("Successfully pushed data to online cloud storage!");
+                localStorage.setItem('dolores_active_draft', payloadToPush);
+                loadActiveDraft();
+                calculate();
+                calculateDrawShares(true);
+                calculateShadowShares(true);
+                calculateReportTotal();
+                alert("Cloud storage has been successfully reset to a fresh start!");
             } else {
-                alert("Failed to sync to cloud. Please check your URL permissions/endpoint type.");
+                alert("Failed to push fresh start to cloud.");
             }
         } catch (err) {
             console.error(err);
-            alert("Network error while pushing to cloud.");
+            alert("Network error while pushing fresh start.");
         }
     }
 
@@ -1046,6 +1016,51 @@
             if (!isAutomatic) {
                 alert("Network error while pulling from cloud.");
             }
+        }
+    }
+
+    function loadActiveDraft() {
+        const saved = localStorage.getItem('dolores_active_draft');
+        if (!saved) return;
+        try {
+            const data = JSON.parse(saved);
+            if (data.cloudSyncUrl) document.getElementById('cloudSyncUrl').value = data.cloudSyncUrl;
+            document.getElementById('eventDate').value = data.eventDate || '';
+            document.getElementById('eventName').value = data.eventName || '';
+            document.getElementById('goodFights').value = data.goodFights || '';
+            document.getElementById('plasada').value = data.plasada || '';
+            document.getElementById('prize').value = data.prize || '';
+            document.getElementById('checkedBy').value = data.checkedBy || '';
+
+            const expenseInputs = document.querySelectorAll('.expense-item');
+            if (data.expenses) {
+                expenseInputs.forEach((inp, idx) => { inp.value = data.expenses[idx] || ''; });
+            }
+
+            document.getElementById('reportTitle').value = data.reportTitle || '';
+            document.getElementById('weeklyReviewNotes').value = data.weeklyReviewNotes || '';
+
+            const dateInputs = document.querySelectorAll('.r-date');
+            const descInputs = document.querySelectorAll('.r-desc');
+            const shareInputs = document.querySelectorAll('.report-share');
+
+            for (let i = 0; i < 7; i++) {
+                dateInputs[i].value = (data.dates && data.dates[i]) ? data.dates[i] : '';
+                descInputs[i].value = (data.descs && data.descs[i]) ? data.descs[i] : '';
+                shareInputs[i].value = (data.shares && data.shares[i]) ? data.shares[i] : '';
+            }
+
+            const dsDates = document.querySelectorAll('.ds-date');
+            const dsNets = document.querySelectorAll('.ds-net');
+            const scDates = document.querySelectorAll('.sc-date');
+            const scNets = document.querySelectorAll('.sc-net');
+
+            dsDates.forEach((inp, idx) => inp.value = (data.dsDates && data.dsDates[idx]) ? data.dsDates[idx] : '');
+            dsNets.forEach((inp, idx) => inp.value = (data.dsNets && data.dsNets[idx]) ? data.dsNets[idx] : '');
+            scDates.forEach((inp, idx) => inp.value = (data.scDates && data.scDates[idx]) ? data.scDates[idx] : '');
+            scNets.forEach((inp, idx) => inp.value = (data.scNets && data.scNets[idx]) ? data.scNets[idx] : '');
+        } catch (e) {
+            console.error("Error loading local draft:", e);
         }
     }
 
@@ -1220,7 +1235,7 @@
             initSession();
         }
 
-        // Automatically pull fresh data from the cloud on initial page load
+        // Pull latest state from cloud automatically on launch
         await pullFromCloudStorage(true);
 
         isInitialLoading = false;
